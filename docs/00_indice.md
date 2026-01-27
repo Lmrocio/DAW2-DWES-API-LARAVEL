@@ -15,6 +15,7 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - docs/06_tests.md: Pruebas feature y unit.
 - docs/07_roles_permisos.md: Roles y permisos con Spatie + Sanctum.
 - docs/08_ingredientes.md: Implementacion de ingredientes (extension de la API).
+- docs/09_likes.md: Implementacion de likes (extension de la API).
 
 ## Archivos creados o modificados para este proyecto
 (Partiendo de un Laravel 12 con Sail)
@@ -54,5 +55,14 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - tests/Feature/IngredienteTest.php
 - docs/08_ingredientes.md
 - docs/HTTPIE_INGREDIENTES.md
+
+## Extension: Likes (Tarea)
+- app/Models/Like.php
+- app/Http/Controllers/Api/LikeController.php
+- database/migrations/2026_01_27_130000_create_likes_table.php
+- database/factories/LikeFactory.php
+- tests/Feature/LikeTest.php
+- docs/09_likes.md
+- docs/HTTPIE_LIKES.md
 
 Si se crean mas archivos propios del proyecto, conviene anadirlos aqui con su tema.

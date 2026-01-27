@@ -11,6 +11,7 @@ Route::get('/user', function (Request $request) {
 
 use App\Http\Controllers\Api\RecetaController;
 use App\Http\Controllers\Api\IngredienteController;
+use App\Http\Controllers\Api\LikeController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('recetas', RecetaController::class);
@@ -21,6 +22,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Rutas para operaciones CRUD directas sobre ingredientes
     Route::apiResource('ingredientes', IngredienteController::class)->except(['index', 'store']);
+
+    // Rutas para el sistema de likes
+    Route::post('recetas/{receta}/like', [LikeController::class, 'toggle']);
+    Route::get('recetas/{receta}/likes', [LikeController::class, 'index']);
+    Route::get('recetas/{receta}/likes/count', [LikeController::class, 'count']);
 });
 
 Route::get('/ping', fn () => response()->json(['pong' => true]));

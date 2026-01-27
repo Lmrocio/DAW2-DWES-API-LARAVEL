@@ -37,7 +37,7 @@ class RecetaController extends Controller
 
         // Paginación
         $perPage = min((int) $request->query('per_page', 10), 50);
-        $recetas = $query->paginate($perPage);
+        $recetas = $query->withCount('likes')->paginate($perPage);
 
         return RecetaResource::collection($recetas);
     }
@@ -64,8 +64,8 @@ class RecetaController extends Controller
     // Mostrar una receta específica
     public function show(Receta $receta) //: \Illuminate\Http\JsonResponse
     {
-        // Cargar la relación de ingredientes
-        $receta->load('ingredientes');
+        // Cargar la relación de ingredientes y el contador de likes
+        $receta->load('ingredientes')->loadCount('likes');
 
         return new RecetaResource($receta);
     }
