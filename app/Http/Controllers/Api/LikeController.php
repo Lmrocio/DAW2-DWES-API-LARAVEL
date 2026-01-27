@@ -4,26 +4,27 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Receta;
+use App\Models\Like;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
 {
     /**
-     * Toggle like: si existe lo elimina, si no existe lo crea
+     * Alternativa: toggleLike - si existe el registro lo elimina, si no existe lo crea
      *
      * POST /api/recetas/{receta}/like
      */
-    public function toggle(Request $request, Receta $receta)
+    public function toggleLike(Request $request, Receta $receta)
     {
         $user = $request->user();
 
-        // Verificar si ya existe el like
-        $existingLike = $receta->likes()
-            ->where('user_id', $user->id)
+        // Buscar registro existente en la tabla likes por user_id y receta_id
+        $existingLike = Like::where('user_id', $user->id)
+            ->where('receta_id', $receta->id)
             ->first();
 
         if ($existingLike) {
-            // Si existe, lo eliminamos (unlike)
+            // Si existe, eliminarlo
             $existingLike->delete();
 
             // Recargar el contador de likes
@@ -36,9 +37,10 @@ class LikeController extends Controller
             ]);
         }
 
-        // Si no existe, lo creamos (like)
-        $receta->likes()->create([
+        // Si no existe, crear instancia del modelo Like
+        Like::create([
             'user_id' => $user->id,
+            'receta_id' => $receta->id,
         ]);
 
         // Recargar el contador de likes

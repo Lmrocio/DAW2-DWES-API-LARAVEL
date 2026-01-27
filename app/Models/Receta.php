@@ -45,20 +45,11 @@ class Receta extends Model
     }
 
     /**
-     * Relación: una receta tiene muchos likes (N:M con users)
+     * Relación: una receta tiene muchos likes (1:N)
      */
     public function likes()
     {
         return $this->hasMany(Like::class);
-    }
-
-    /**
-     * Relación: usuarios que han dado like a esta receta
-     */
-    public function likedByUsers()
-    {
-        return $this->belongsToMany(User::class, 'likes')
-            ->withTimestamps();
     }
 
     /**
@@ -106,5 +97,80 @@ class Receta extends Model
 
         // Construir URL absoluta usando asset() que genera URL completa
         return asset('storage/' . $this->imagen_url);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Query Scopes (filtros reutilizables)
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Scope: Filtrar recetas por ingrediente (que contenga un texto)
+     *
+     * Ejemplo: Receta::conIngrediente('huevo')->get()
+     */
+    public function scopeConIngrediente($query, ?string $ingrediente)
+    {
+        if (!$ingrediente) {
+            return $query;
+        }
+
+        return $query->whereHas('ingredientes', function ($q) use ($ingrediente) {
+            $q->where('nombre', 'ILIKE', "%{$ingrediente}%");
+        });
+    }
+
+    /**
+     * Scope: Ordenar por popularidad (número de likes descendente)
+     *
+     * Ejemplo: Receta::porPopularidad()->get()
+     */
+    public function scopePorPopularidad($query)
+    {
+        return $query->withCount('likes')
+            ->orderBy('likes_count', 'desc');
+    }
+
+    /**
+     * Scope: Búsqueda general en título y descripción
+     *
+     * Ejemplo: Receta::buscar('paella')->get()
+     */
+    public function scopeBuscar($query, ?string $termino)
+    {
+        if (!$termino) {
+            return $query;
+        }
+
+        return $query->where(function ($q) use ($termino) {
+            $q->where('titulo', 'ILIKE', "%{$termino}%")
+                ->orWhere('descripcion', 'ILIKE', "%{$termino}%");
+        });
+    }
+
+    /**
+     * Scope: Ordenar por campo permitido
+     *
+     * Ejemplo: Receta::ordenarPor('titulo', 'desc')->get()
+     */
+    public function scopeOrdenarPor($query, ?string $campo, string $direccion = 'asc')
+    {
+        if (!$campo) {
+            return $query;
+        }
+
+        $camposPermitidos = ['titulo', 'created_at', 'likes_count'];
+
+        if (!in_array($campo, $camposPermitidos)) {
+            return $query;
+        }
+
+        // Si ordena por likes_count, necesita withCount
+        if ($campo === 'likes_count' && !$query->getQuery()->columns) {
+            $query->withCount('likes');
+        }
+
+        return $query->orderBy($campo, $direccion);
     }
 }

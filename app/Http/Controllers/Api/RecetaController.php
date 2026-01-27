@@ -10,39 +10,133 @@ use App\Http\Resources\RecetaResource;
 
 class RecetaController extends Controller
 {
-    // Guía docente: ver docs/03_controladores.md.
-    // Listar todas las recetas
+    /**
+     * @OA\Get(
+     *     path="/recetas",
+     *     tags={"Recetas"},
+     *     summary="Listar todas las recetas",
+     *     description="Obtiene un listado paginado de recetas con filtros opcionales",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="q",
+     *         in="query",
+     *         description="Búsqueda en título y descripción",
+     *         required=false,
+     *         @OA\Schema(type="string", example="paella")
+     *     ),
+     *     @OA\Parameter(
+     *         name="ingrediente",
+     *         in="query",
+     *         description="Filtrar por ingrediente",
+     *         required=false,
+     *         @OA\Schema(type="string", example="arroz")
+     *     ),
+     *     @OA\Parameter(
+     *         name="sort",
+     *         in="query",
+     *         description="Ordenar por campo (popular, titulo, created_at). Prefijo '-' para descendente",
+     *         required=false,
+     *         @OA\Schema(type="string", enum={"popular", "-popular", "titulo", "-titulo", "created_at", "-created_at"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="Número de página",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Resultados por página (máximo 50)",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de recetas obtenida correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="data", type="array", @OA\Items(
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="titulo", type="string", example="Paella Valenciana"),
+     *                 @OA\Property(property="descripcion", type="string", example="Tradicional paella española"),
+     *                 @OA\Property(property="user_id", type="integer", example=1),
+     *                 @OA\Property(property="imagen_url", type="string", example="http://localhost/storage/recetas/abc.jpg"),
+     *                 @OA\Property(property="likes_count", type="integer", example=25),
+     *                 @OA\Property(property="liked_by_user", type="boolean", example=true)
+     *             ))
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado")
+     * )
+     */
     public function index(Request $request)
     {
         $query = Receta::query();
 
-        // Búsqueda
-        if ($search = $request->query('q')) {
-            $query->where(function ($q) use ($search) {
-                $q->where('titulo', 'ILIKE', "%{$search}%")
-                    ->orWhere('descripcion', 'ILIKE', "%{$search}%");
-            });
-        } //PostgreSQL ✔ (ILIKE)
+        // Filtro: Búsqueda general en título y descripción
+        $query->buscar($request->query('q'));
 
-        // Ordenación
-        $allowedSorts = ['titulo', 'created_at'];
-        if ($sort = $request->query('sort')) {
+        // Filtro: Por ingrediente (nuevo)
+        $query->conIngrediente($request->query('ingrediente'));
+
+        // Ordenación avanzada
+        $sort = $request->query('sort');
+
+        if ($sort === 'popular' || $sort === '-popular') {
+            // Ordenar por popularidad (número de likes)
+            $query->porPopularidad();
+        } else if ($sort) {
+            // Ordenación por otros campos
             $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
             $field = ltrim($sort, '-');
-
-            if (in_array($field, $allowedSorts)) {
-                $query->orderBy($field, $direction);
-            }
+            $query->ordenarPor($field, $direction);
         }
+
+        // Siempre cargar el contador de likes
+        $query->withCount('likes');
 
         // Paginación
         $perPage = min((int) $request->query('per_page', 10), 50);
-        $recetas = $query->withCount('likes')->paginate($perPage);
+        $recetas = $query->paginate($perPage);
 
         return RecetaResource::collection($recetas);
     }
 
-    // Crear una nueva receta
+    /**
+     * @OA\Post(
+     *     path="/recetas",
+     *     tags={"Recetas"},
+     *     summary="Crear una nueva receta",
+     *     description="Crea una nueva receta. Puede incluir imagen del plato",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 required={"titulo", "descripcion", "instrucciones"},
+     *                 @OA\Property(property="titulo", type="string", example="Tortilla de patatas", maxLength=200),
+     *                 @OA\Property(property="descripcion", type="string", example="Clásica tortilla española"),
+     *                 @OA\Property(property="instrucciones", type="string", example="1. Pelar patatas 2. Freír 3. Batir huevos..."),
+     *                 @OA\Property(property="imagen", type="string", format="binary", description="Imagen del plato (jpeg, png, jpg, max 2MB)")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Receta creada correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="titulo", type="string", example="Tortilla de patatas"),
+     *             @OA\Property(property="user_id", type="integer", example=1),
+     *             @OA\Property(property="imagen_url", type="string", example="recetas/abc123.jpg")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=422, description="Error de validación")
+     * )
+     */
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
@@ -72,7 +166,49 @@ class RecetaController extends Controller
         return response()->json($receta, 201);
     }
 
-    // Mostrar una receta específica
+    /**
+     * @OA\Get(
+     *     path="/recetas/{id}",
+     *     tags={"Recetas"},
+     *     summary="Ver una receta específica",
+     *     description="Obtiene los detalles completos de una receta incluyendo ingredientes, likes y comentarios",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID de la receta",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Receta obtenida correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example=1),
+     *             @OA\Property(property="titulo", type="string", example="Paella Valenciana"),
+     *             @OA\Property(property="descripcion", type="string"),
+     *             @OA\Property(property="instrucciones", type="string"),
+     *             @OA\Property(property="imagen_url", type="string"),
+     *             @OA\Property(property="likes_count", type="integer", example=25),
+     *             @OA\Property(property="liked_by_user", type="boolean"),
+     *             @OA\Property(property="ingredientes", type="array", @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="nombre", type="string"),
+     *                 @OA\Property(property="cantidad", type="string"),
+     *                 @OA\Property(property="unidad", type="string")
+     *             )),
+     *             @OA\Property(property="comentarios", type="array", @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="texto", type="string"),
+     *                 @OA\Property(property="user_name", type="string")
+     *             )),
+     *             @OA\Property(property="comentarios_count", type="integer")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Receta no encontrada")
+     * )
+     */
     public function show(Receta $receta) //: \Illuminate\Http\JsonResponse
     {
         // Cargar la relación de ingredientes, comentarios y el contador de likes
@@ -82,7 +218,39 @@ class RecetaController extends Controller
         return new RecetaResource($receta);
     }
 
-    // Actualizar una receta existente
+    /**
+     * @OA\Put(
+     *     path="/recetas/{id}",
+     *     tags={"Recetas"},
+     *     summary="Actualizar una receta",
+     *     description="Actualiza los datos de una receta. Solo el propietario o admin pueden hacerlo",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID de la receta",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(property="titulo", type="string"),
+     *                 @OA\Property(property="descripcion", type="string"),
+     *                 @OA\Property(property="instrucciones", type="string"),
+     *                 @OA\Property(property="imagen", type="string", format="binary")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Receta actualizada"),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="No autorizado"),
+     *     @OA\Response(response=404, description="Receta no encontrada"),
+     *     @OA\Response(response=422, description="Error de validación")
+     * )
+     */
     public function update(Request $request, Receta $receta, RecetaService $recetaService)
     {
         // Forma clásica (Laravel <=10, muy común en empresa)
@@ -122,8 +290,32 @@ class RecetaController extends Controller
         return response()->json($receta);
     }
 
-
-    // Eliminar una receta
+    /**
+     * @OA\Delete(
+     *     path="/recetas/{id}",
+     *     tags={"Recetas"},
+     *     summary="Eliminar una receta",
+     *     description="Elimina una receta. Solo el propietario o admin pueden hacerlo",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID de la receta",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Receta eliminada correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Receta eliminada")
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=403, description="No autorizado"),
+     *     @OA\Response(response=404, description="Receta no encontrada")
+     * )
+     */
     public function destroy(Receta $receta)
     {
         // 1. Autorización (403 si falla)

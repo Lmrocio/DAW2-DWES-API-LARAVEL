@@ -18,6 +18,9 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - docs/09_likes.md: Implementacion de likes (extension de la API).
 - docs/10_comentarios.md: Implementacion de comentarios (extension de la API).
 - docs/11_imagenes.md: Subida de imagenes del plato final (extension opcional).
+- docs/12_filtros_avanzados.md: Filtros avanzados con Eloquent Scopes (mejora).
+- docs/13_swagger.md: Documentacion interactiva con Swagger/OpenAPI.
+- docs/14_extensiones_test.md: Tests comprehensivos de todas las extensiones.
 
 ## Archivos creados o modificados para este proyecto
 (Partiendo de un Laravel 12 con Sail)
@@ -83,5 +86,10 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - tests/Feature/RecetaImagenTest.php
 - docs/11_imagenes.md
 - docs/HTTPIE_IMAGENES.md
+
+## Mejora: Filtros Avanzados (Eloquent Scopes)
+- tests/Feature/RecetaFiltrosAvanzadosTest.php
+- docs/12_filtros_avanzados.md
+- docs/HTTPIE_FILTROS_AVANZADOS.md
 
 Si se crean mas archivos propios del proyecto, conviene anadirlos aqui con su tema.
