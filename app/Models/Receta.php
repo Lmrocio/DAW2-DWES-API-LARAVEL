@@ -22,12 +22,13 @@ class Receta extends Model
         'descripcion',
         'instrucciones',
         'publicada',
+        'imagen_url',
     ];
 
     /**
      * Atributos que deben ser añadidos a la serialización del modelo
      */
-    protected $appends = ['likes_count'];
+    protected $appends = ['likes_count', 'imagen_url_completa'];
 
     // Relación inversa: una receta pertenece a un usuario
     public function user()
@@ -86,5 +87,24 @@ class Receta extends Model
     public function comentarios()
     {
         return $this->hasMany(Comentario::class);
+    }
+
+    /**
+     * Accessor: URL completa de la imagen del plato
+     * Devuelve la URL absoluta y accesible desde la API
+     */
+    public function getImagenUrlCompletaAttribute(): ?string
+    {
+        if (!$this->imagen_url) {
+            return null;
+        }
+
+        // Si ya es una URL completa (http/https), devolverla tal cual
+        if (str_starts_with($this->imagen_url, 'http')) {
+            return $this->imagen_url;
+        }
+
+        // Construir URL absoluta usando asset() que genera URL completa
+        return asset('storage/' . $this->imagen_url);
     }
 }

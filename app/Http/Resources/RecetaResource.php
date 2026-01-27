@@ -22,6 +22,7 @@ class RecetaResource extends JsonResource
             'instrucciones' => $this->instrucciones,
             'publicada' => $this->publicada,
             'user_id' => $this->user_id,
+            'imagen_url' => $this->imagen_url_completa,
             'created_at' => $this->created_at,
             'ingredientes' => IngredienteResource::collection($this->whenLoaded('ingredientes')),
             'likes_count' => $this->whenCounted('likes'),

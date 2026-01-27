@@ -17,6 +17,7 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - docs/08_ingredientes.md: Implementacion de ingredientes (extension de la API).
 - docs/09_likes.md: Implementacion de likes (extension de la API).
 - docs/10_comentarios.md: Implementacion de comentarios (extension de la API).
+- docs/11_imagenes.md: Subida de imagenes del plato final (extension opcional).
 
 ## Archivos creados o modificados para este proyecto
 (Partiendo de un Laravel 12 con Sail)
@@ -76,5 +77,11 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - tests/Feature/ComentarioTest.php
 - docs/10_comentarios.md
 - docs/HTTPIE_COMENTARIOS.md
+
+## Extension: Imagen del plato final (Opcional)
+- database/migrations/2026_01_27_150000_add_imagen_url_to_recetas_table.php
+- tests/Feature/RecetaImagenTest.php
+- docs/11_imagenes.md
+- docs/HTTPIE_IMAGENES.md
 
 Si se crean mas archivos propios del proyecto, conviene anadirlos aqui con su tema.

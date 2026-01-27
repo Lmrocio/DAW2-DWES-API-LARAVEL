@@ -49,13 +49,24 @@ class RecetaController extends Controller
             'titulo' => 'required|string|max:200',
             'descripcion' => 'required|string',
             'instrucciones' => 'required|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // max 2MB
         ]);
+
+        // Procesar la imagen si fue enviada
+        $imagenUrl = null;
+        if ($request->hasFile('imagen')) {
+            $imagen = $request->file('imagen');
+            // Guardar en storage/app/public/recetas
+            $path = $imagen->store('recetas', 'public');
+            $imagenUrl = $path;
+        }
 
         $receta = Receta::create([
             'user_id' => $request->user()->id,
             'titulo' => $data['titulo'],
             'descripcion' => $data['descripcion'],
             'instrucciones' => $data['instrucciones'],
+            'imagen_url' => $imagenUrl,
         ]);
 
         return response()->json($receta, 201);
@@ -90,7 +101,21 @@ class RecetaController extends Controller
             'titulo' => 'sometimes|required|string|max:200',
             'descripcion' => 'sometimes|required|string',
             'instrucciones' => 'sometimes|required|string',
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // max 2MB
         ]);
+
+        // Procesar la imagen si fue enviada
+        if ($request->hasFile('imagen')) {
+            // Eliminar la imagen anterior si existe
+            if ($receta->imagen_url) {
+                \Storage::disk('public')->delete($receta->imagen_url);
+            }
+
+            $imagen = $request->file('imagen');
+            // Guardar en storage/app/public/recetas
+            $path = $imagen->store('recetas', 'public');
+            $data['imagen_url'] = $path;
+        }
 
         $receta->update($data);
 
@@ -109,9 +134,12 @@ class RecetaController extends Controller
          * Gate::authorize('delete', $receta);
          */
 
+        // 2. Eliminar la imagen si existe
+        if ($receta->imagen_url) {
+            \Storage::disk('public')->delete($receta->imagen_url);
+        }
 
-
-        // 2. Acción
+        // 3. Eliminar la receta
         $receta->delete();
 
         return response()->json(['message' => 'Receta eliminada']);
