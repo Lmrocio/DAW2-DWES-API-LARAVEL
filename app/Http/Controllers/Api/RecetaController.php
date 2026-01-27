@@ -64,8 +64,10 @@ class RecetaController extends Controller
     // Mostrar una receta específica
     public function show(Receta $receta) //: \Illuminate\Http\JsonResponse
     {
-        //return response()->json($receta);
-        return $receta;
+        // Cargar la relación de ingredientes
+        $receta->load('ingredientes');
+
+        return new RecetaResource($receta);
     }
 
     // Actualizar una receta existente

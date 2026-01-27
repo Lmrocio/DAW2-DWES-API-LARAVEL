@@ -10,9 +10,17 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 use App\Http\Controllers\Api\RecetaController;
+use App\Http\Controllers\Api\IngredienteController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('recetas', RecetaController::class);
+
+    // Rutas anidadas para ingredientes de una receta
+    Route::get('recetas/{receta}/ingredientes', [IngredienteController::class, 'index']);
+    Route::post('recetas/{receta}/ingredientes', [IngredienteController::class, 'store']);
+
+    // Rutas para operaciones CRUD directas sobre ingredientes
+    Route::apiResource('ingredientes', IngredienteController::class)->except(['index', 'store']);
 });
 
 Route::get('/ping', fn () => response()->json(['pong' => true]));

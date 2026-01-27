@@ -23,6 +23,7 @@ class RecetaResource extends JsonResource
             'publicada' => $this->publicada,
             'user_id' => $this->user_id,
             'created_at' => $this->created_at,
+            'ingredientes' => IngredienteResource::collection($this->whenLoaded('ingredientes')),
         ];
     }
 }

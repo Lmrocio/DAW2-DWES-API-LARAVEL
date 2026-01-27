@@ -14,6 +14,7 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - docs/05_base_de_datos.md: Migraciones y factories.
 - docs/06_tests.md: Pruebas feature y unit.
 - docs/07_roles_permisos.md: Roles y permisos con Spatie + Sanctum.
+- docs/08_ingredientes.md: Implementacion de ingredientes (extension de la API).
 
 ## Archivos creados o modificados para este proyecto
 (Partiendo de un Laravel 12 con Sail)
@@ -42,5 +43,16 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - tests/Feature/RecetaCrudTest.php
 - tests/Feature/RecetaAuthorizationTest.php
 - tests/Unit/RecetaServiceTest.php
+
+## Extension: Ingredientes (Tarea)
+- app/Models/Ingrediente.php
+- app/Http/Resources/IngredienteResource.php
+- app/Policies/IngredientePolicy.php
+- app/Http/Controllers/Api/IngredienteController.php
+- database/migrations/2026_01_27_120000_create_ingredientes_table.php
+- database/factories/IngredienteFactory.php
+- tests/Feature/IngredienteTest.php
+- docs/08_ingredientes.md
+- docs/HTTPIE_INGREDIENTES.md
 
 Si se crean mas archivos propios del proyecto, conviene anadirlos aqui con su tema.
