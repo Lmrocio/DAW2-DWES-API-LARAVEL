@@ -29,6 +29,8 @@ class RecetaResource extends JsonResource
                 $request->user(),
                 fn() => $this->isLikedBy($request->user())
             ),
+            'comentarios' => ComentarioResource::collection($this->whenLoaded('comentarios')),
+            'comentarios_count' => $this->whenCounted('comentarios'),
         ];
     }
 }

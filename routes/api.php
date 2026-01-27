@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request) {
 use App\Http\Controllers\Api\RecetaController;
 use App\Http\Controllers\Api\IngredienteController;
 use App\Http\Controllers\Api\LikeController;
+use App\Http\Controllers\Api\ComentarioController;
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('recetas', RecetaController::class);
@@ -27,6 +28,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('recetas/{receta}/like', [LikeController::class, 'toggle']);
     Route::get('recetas/{receta}/likes', [LikeController::class, 'index']);
     Route::get('recetas/{receta}/likes/count', [LikeController::class, 'count']);
+
+    // Rutas para el sistema de comentarios
+    Route::get('recetas/{receta}/comentarios', [ComentarioController::class, 'index']);
+    Route::post('recetas/{receta}/comentarios', [ComentarioController::class, 'store']);
+
+    // Rutas para operaciones CRUD directas sobre comentarios
+    Route::apiResource('comentarios', ComentarioController::class)->except(['index', 'store']);
 });
 
 Route::get('/ping', fn () => response()->json(['pong' => true]));

@@ -79,4 +79,12 @@ class Receta extends Model
 
         return $this->likes()->where('user_id', $user->id)->exists();
     }
+
+    /**
+     * Relación: una receta tiene muchos comentarios
+     */
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
+    }
 }

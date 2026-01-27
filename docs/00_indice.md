@@ -16,6 +16,7 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - docs/07_roles_permisos.md: Roles y permisos con Spatie + Sanctum.
 - docs/08_ingredientes.md: Implementacion de ingredientes (extension de la API).
 - docs/09_likes.md: Implementacion de likes (extension de la API).
+- docs/10_comentarios.md: Implementacion de comentarios (extension de la API).
 
 ## Archivos creados o modificados para este proyecto
 (Partiendo de un Laravel 12 con Sail)
@@ -64,5 +65,16 @@ Este indice organiza la documentacion por temas para alumnado que no ha visto La
 - tests/Feature/LikeTest.php
 - docs/09_likes.md
 - docs/HTTPIE_LIKES.md
+
+## Extension: Comentarios (Tarea)
+- app/Models/Comentario.php
+- app/Http/Resources/ComentarioResource.php
+- app/Policies/ComentarioPolicy.php
+- app/Http/Controllers/Api/ComentarioController.php
+- database/migrations/2026_01_27_140000_create_comentarios_table.php
+- database/factories/ComentarioFactory.php
+- tests/Feature/ComentarioTest.php
+- docs/10_comentarios.md
+- docs/HTTPIE_COMENTARIOS.md
 
 Si se crean mas archivos propios del proyecto, conviene anadirlos aqui con su tema.

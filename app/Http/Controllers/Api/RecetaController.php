@@ -64,8 +64,9 @@ class RecetaController extends Controller
     // Mostrar una receta específica
     public function show(Receta $receta) //: \Illuminate\Http\JsonResponse
     {
-        // Cargar la relación de ingredientes y el contador de likes
-        $receta->load('ingredientes')->loadCount('likes');
+        // Cargar la relación de ingredientes, comentarios y el contador de likes
+        $receta->load(['ingredientes', 'comentarios.user'])
+            ->loadCount(['likes', 'comentarios']);
 
         return new RecetaResource($receta);
     }
