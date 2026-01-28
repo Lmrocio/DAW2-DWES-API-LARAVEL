@@ -687,19 +687,17 @@ http GET :8000/api/recetas/1 \
 
 ## Acceso a la UI de Swagger
 
-### Paso 1: Generar la documentación
+### ⚠️ NOTA IMPORTANTE - Swagger se sirve desde `storage/api-docs/api-docs.json`
 
-```bash
-php artisan l5-swagger:generate
-```
+El archivo JSON de la especificación OpenAPI ya está **pre-generado** en `storage/api-docs/api-docs.json`. 
 
-Este comando escanea las anotaciones en los controladores y genera el archivo JSON de OpenAPI.
+**No necesitas ejecutar** `php artisan l5-swagger:generate` (puede fallar en algunos entornos).
 
 ---
 
-### Paso 2: Acceder a Swagger UI
+### Paso 1: Acceder a la interfaz Swagger UI
 
-Abre tu navegador y ve a:
+Abre tu navegador y ve directamente a:
 
 ```
 http://localhost/api/documentation
@@ -711,11 +709,25 @@ O si tu servidor corre en puerto 8000:
 http://localhost:8000/api/documentation
 ```
 
+La ruta `/api/documentation` está configurada para:
+1. Buscar el JSON en `storage/api-docs/api-docs.json` ✅ (ya existe)
+2. Si está disponible, redirige a Swagger UI
+
 **Verás:** Una interfaz interactiva con todos los endpoints documentados.
 
 ---
 
-### Paso 3: Autenticarse en Swagger
+### Alternativa: Acceder al JSON directamente
+
+Si Swagger UI no está disponible (assets no publicados), puedes acceder al JSON directamente:
+
+```
+http://localhost/storage/api-docs/api-docs.json
+```
+
+---
+
+### Paso 2: Autenticarse en Swagger
 
 Para probar endpoints protegidos, necesitas autenticarte:
 
@@ -834,33 +846,58 @@ Ahora puedes probar cualquier endpoint directamente desde el navegador:
 
 ### Troubleshooting Swagger
 
-#### No aparece la documentación
+#### "Swagger UI no aparece" o "404 not found"
 
 **Solución:**
+
+1. Verifica que el archivo JSON existe:
+```bash
+ls -la storage/api-docs/api-docs.json
+```
+
+2. Si no existe, créalo manualmente (ya está en el repositorio)
+
+3. Accede directamente al JSON:
+```
+http://localhost/storage/api-docs/api-docs.json
+```
+
+4. Si el JSON está vacío o corrupto, puedes regenerarlo:
 ```bash
 php artisan l5-swagger:generate
-php artisan cache:clear
+# O simplemente copiar el api-docs.json del repositorio
 ```
 
-#### Cambios no se reflejan
+#### "El botón Authorize no aparece"
 
-**Solución:** Regenerar la documentación
+**Verificar:** Que en el JSON esté definida la seguridad:
+```json
+"components": {
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer"
+    }
+  }
+}
+```
+
+#### "Los cambios en controladores no se reflejan en Swagger"
+
+**Solución:** El JSON es estático. Si cambias código de los controladores:
 ```bash
+# Opción 1: Regenerar (si swagger-php funciona)
 php artisan l5-swagger:generate
+
+# Opción 2: Actualizar JSON manualmente en storage/api-docs/api-docs.json
 ```
 
-#### No aparece el botón "Authorize"
+#### "swagger-php genera error 'Required @OA\PathItem() not found'"
 
-**Verificar:** Que en `Controller.php` esté la anotación:
-```php
-/**
- * @OA\SecurityScheme(
- *     securityScheme="bearerAuth",
- *     type="http",
- *     scheme="bearer"
- * )
- */
-```
+**Solución:** Este es un problema conocido. La forma más práctica es:
+1. Usar el JSON pre-generado (ya está disponible)
+2. No confiar en `l5-swagger:generate` para entornos educativos
+3. El JSON funciona igual de bien para documentación y testing desde el navegador
 
 ---
 
@@ -878,11 +915,15 @@ php artisan test
 
 # Resultado esperado: ~85+ tests passed ✅
 
-# 4. Generar documentación Swagger
-php artisan l5-swagger:generate
+# 4. Swagger ya está pre-generado, accede a:
+# http://localhost/api/documentation
+# (NO necesitas ejecutar: php artisan l5-swagger:generate)
 
 # 5. Ver rutas de la API
 php artisan route:list --path=api
+
+# 6. (Opcional) Si necesitas regenerar Swagger
+php artisan l5-swagger:generate
 ```
 
 ---

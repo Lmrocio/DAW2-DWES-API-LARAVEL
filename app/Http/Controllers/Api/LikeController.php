@@ -10,9 +10,40 @@ use Illuminate\Http\Request;
 class LikeController extends Controller
 {
     /**
-     * Alternativa: toggleLike - si existe el registro lo elimina, si no existe lo crea
-     *
-     * POST /api/recetas/{receta}/like
+     * @OA\Post(
+     *     path="/recetas/{receta}/like",
+     *     tags={"Likes"},
+     *     summary="Dar/quitar like (toggle)",
+     *     description="Alterna el estado de like: si existe lo elimina, si no existe lo crea",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="receta",
+     *         in="path",
+     *         description="ID de la receta",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Like añadido correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Like añadido correctamente"),
+     *             @OA\Property(property="liked", type="boolean", example=true),
+     *             @OA\Property(property="likes_count", type="integer", example=5)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Like eliminado correctamente",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Like eliminado correctamente"),
+     *             @OA\Property(property="liked", type="boolean", example=false),
+     *             @OA\Property(property="likes_count", type="integer", example=4)
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Receta no encontrada")
+     * )
      */
     public function toggleLike(Request $request, Receta $receta)
     {
@@ -54,9 +85,29 @@ class LikeController extends Controller
     }
 
     /**
-     * Obtener el número de likes de una receta
-     *
-     * GET /api/recetas/{receta}/likes/count
+     * @OA\Get(
+     *     path="/recetas/{receta}/likes/count",
+     *     tags={"Likes"},
+     *     summary="Obtener contador de likes",
+     *     description="Retorna el número total de likes de una receta",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="receta",
+     *         in="path",
+     *         description="ID de la receta",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Contador de likes obtenido",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="likes_count", type="integer", example=25)
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Receta no encontrada")
+     * )
      */
     public function count(Receta $receta)
     {
@@ -66,9 +117,39 @@ class LikeController extends Controller
     }
 
     /**
-     * Listar usuarios que han dado like a una receta
-     *
-     * GET /api/recetas/{receta}/likes
+     * @OA\Get(
+     *     path="/recetas/{receta}/likes",
+     *     tags={"Likes"},
+     *     summary="Listar usuarios que dieron like",
+     *     description="Obtiene la lista de usuarios que dieron like a una receta",
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="receta",
+     *         in="path",
+     *         description="ID de la receta",
+     *         required=true,
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Lista de usuarios que dieron like",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="likes",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer", example=1),
+     *                     @OA\Property(property="user_id", type="integer", example=2),
+     *                     @OA\Property(property="user_name", type="string", example="Juan Pérez"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time")
+     *                 )
+     *             ),
+     *             @OA\Property(property="likes_count", type="integer", example=5)
+     *         )
+     *     ),
+     *     @OA\Response(response=401, description="No autenticado"),
+     *     @OA\Response(response=404, description="Receta no encontrada")
+     * )
      */
     public function index(Receta $receta)
     {

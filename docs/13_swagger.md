@@ -4,6 +4,8 @@
 
 La API está completamente documentada con **Swagger/OpenAPI 3.0** usando el paquete **l5-swagger**.
 
+**✅ IMPORTANTE:** El archivo JSON de OpenAPI ya está pre-generado en `storage/api-docs/api-docs.json`. No necesitas ejecutar comandos de generación.
+
 ---
 
 ## 🚀 Acceder a la documentación
@@ -20,6 +22,18 @@ O si usas puerto 8000:
 
 ```
 http://localhost:8000/api/documentation
+```
+
+**¡Listo!** La interfaz interactiva cargará automáticamente el JSON pre-generado.
+
+---
+
+### Acceso directo al JSON
+
+Si prefieres acceder directamente al archivo JSON:
+
+```
+http://localhost/storage/api-docs/api-docs.json
 ```
 
 ---
@@ -147,11 +161,19 @@ storage/api-docs/api-docs.json
 
 ### Regenerar documentación
 
-Cada vez que modifiques las anotaciones en los controladores, ejecuta:
+**Caso normal:** No necesitas hacer nada. El JSON ya existe.
+
+**Caso avanzado:** Si modificaste muchas anotaciones en los controladores y quieres que Swagger refleje los cambios:
 
 ```bash
+# Opción 1: Intentar regenerar con l5-swagger (puede fallar)
 php artisan l5-swagger:generate
+
+# Opción 2: Editar manualmente storage/api-docs/api-docs.json
+# (Si swagger-php falla, esta es la más práctica)
 ```
+
+**Nota:** Para un proyecto educativo, el JSON pre-generado es suficiente para documentación y testing desde el navegador.
 
 ---
 
@@ -243,37 +265,65 @@ public function index(Request $request)
 
 ## 🔧 Troubleshooting
 
-### Error: "swagger.json not found"
+### El JSON ya está pre-generado
 
-**Solución:**
+**Buena noticia:** El archivo `storage/api-docs/api-docs.json` ya existe y está configurado.
+
+**No necesitas ejecutar:**
 ```bash
+# ❌ NO NECESARIO - El JSON ya existe
 php artisan l5-swagger:generate
 ```
 
-### Los cambios en anotaciones no se reflejan
+### Error: "swagger.json not found"
 
 **Solución:**
-```bash
-# Limpiar caché
-php artisan cache:clear
 
-# Regenerar documentación
+1. Verifica que el archivo existe:
+```bash
+ls -la storage/api-docs/api-docs.json
+```
+
+2. Si no existe, cópialo del repositorio o crea uno nuevo.
+
+### Los cambios en anotaciones no se reflejan
+
+**Importante:** El JSON es estático. Si modificas los controladores y quieres que Swagger refleje los cambios:
+
+```bash
+# Opción 1: Regenerar (si swagger-php funciona en tu sistema)
 php artisan l5-swagger:generate
+
+# Opción 2: Actualizar manualmente el JSON en storage/api-docs/api-docs.json
 ```
 
 ### No aparece el botón "Authorize"
 
-**Verificación:** Asegúrate de que en `Controller.php` esté la anotación:
+**Verificación:** Asegúrate de que en el JSON esté la seguridad definida:
 
-```php
-/**
- * @OA\SecurityScheme(
- *     securityScheme="bearerAuth",
- *     type="http",
- *     scheme="bearer"
- * )
- */
+```json
+"components": {
+  "securitySchemes": {
+    "bearerAuth": {
+      "type": "http",
+      "scheme": "bearer"
+    }
+  }
+}
 ```
+
+**Si no aparece:**
+1. Verifica que el JSON en `storage/api-docs/api-docs.json` tenga esta sección
+2. Recarga la página del navegador (Ctrl+F5)
+
+### "Required @OA\PathItem() not found"
+
+**Problema:** Error común al ejecutar `php artisan l5-swagger:generate`
+
+**Solución:** 
+- ✅ El JSON pre-generado evita este problema completamente
+- ❌ No intentes regenerar si swagger-php tiene problemas de parsing
+- ✅ Usa el JSON que ya existe en el repositorio
 
 ---
 
