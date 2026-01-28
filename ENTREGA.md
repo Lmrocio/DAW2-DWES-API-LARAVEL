@@ -8,7 +8,7 @@
 
 ## Funcionalidades implementadas
 
-### Extensiones obligatorias (100%)
+### Extensiones obligatorias
 
 #### 1. Sistema de Ingredientes (1:N)
 
@@ -691,13 +691,6 @@ http GET :8000/api/recetas/1 \
 
 ## Acceso a la UI de Swagger
 
-### NOTA IMPORTANTE - Swagger se sirve desde `storage/api-docs/api-docs.json`
-
-El archivo JSON de la especificación OpenAPI ya está **pre-generado** en `storage/api-docs/api-docs.json`. 
-
-**No necesitas ejecutar** `php artisan l5-swagger:generate` (puede fallar en algunos entornos).
-
----
 
 ### Paso 1: Acceder a la interfaz Swagger UI
 
@@ -714,7 +707,7 @@ http://localhost:8000/api/documentation
 ```
 
 La ruta `/api/documentation` está configurada para:
-1. Buscar el JSON en `storage/api-docs/api-docs.json` ✅ (ya existe)
+1. Buscar el JSON en `storage/api-docs/api-docs.json`
 2. Si está disponible, redirige a Swagger UI
 
 **Verás:** Una interfaz interactiva con todos los endpoints documentados.
