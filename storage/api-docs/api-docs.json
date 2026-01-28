@@ -11,6 +11,370 @@
         }
     ],
     "paths": {
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Registrar un nuevo usuario",
+                "operationId": "08136088c4862c313b35d6518bab8d3a",
+                "requestBody": {},
+                "responses": {
+                    "201": {
+                        "description": "Usuario registrado correctamente"
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Iniciar sesión",
+                "operationId": "99d66635c4992aeaa6aa44ff653d0563",
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Login exitoso"
+                    },
+                    "401": {
+                        "description": "Credenciales inválidas"
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Cerrar sesión",
+                "operationId": "6abf3b64a4bc7838d56346f05a5153af",
+                "responses": {
+                    "200": {
+                        "description": "Sesión cerrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/me": {
+            "get": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Obtener datos del usuario autenticado",
+                "operationId": "7edae2cdbaafc10dff8c9c4198b320a2",
+                "responses": {
+                    "200": {
+                        "description": "Datos del usuario obtenidos"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/auth/refresh": {
+            "post": {
+                "tags": [
+                    "Autenticación"
+                ],
+                "summary": "Refrescar token de autenticación",
+                "operationId": "e7ab7446393758bb71fd1946a349e500",
+                "responses": {
+                    "200": {
+                        "description": "Token refrescado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/recetas/{receta}/comentarios": {
+            "get": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Listar comentarios de una receta",
+                "operationId": "105ea8e0d855c888f15f9c80d1c406a0",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Crear un comentario",
+                "operationId": "2317de860f1d4d22151aa7fb83e87502",
+                "responses": {
+                    "201": {
+                        "description": "Comentario creado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/comentarios/{comentario}": {
+            "get": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Ver un comentario específico",
+                "operationId": "d6bb9cf15cdb0f625d810ba43fa63911",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Actualizar un comentario",
+                "operationId": "8865fc4a424a9f2bcdf78fdf6a057d34",
+                "responses": {
+                    "200": {
+                        "description": "Comentario actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Comentarios"
+                ],
+                "summary": "Eliminar un comentario",
+                "operationId": "27f883ec77f55250d30be38923ba5bf3",
+                "responses": {
+                    "200": {
+                        "description": "Comentario eliminado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/recetas/{receta}/ingredientes": {
+            "get": {
+                "tags": [
+                    "Ingredientes"
+                ],
+                "summary": "Listar ingredientes de una receta",
+                "operationId": "26cb65af165bcb7cd201915fcb8aecf7",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Ingredientes"
+                ],
+                "summary": "Agregar un ingrediente a una receta",
+                "operationId": "48b90f075f51df7432c51970cb3de40f",
+                "responses": {
+                    "201": {
+                        "description": "Ingrediente creado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/ingredientes/{ingrediente}": {
+            "get": {
+                "tags": [
+                    "Ingredientes"
+                ],
+                "summary": "Ver un ingrediente específico",
+                "operationId": "9641bc78a22bc6ac50a9777bb90ca23d",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Ingredientes"
+                ],
+                "summary": "Actualizar un ingrediente",
+                "operationId": "93bd749a16de4bce1cb009d5425ff1a0",
+                "responses": {
+                    "200": {
+                        "description": "Ingrediente actualizado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Ingredientes"
+                ],
+                "summary": "Eliminar un ingrediente",
+                "operationId": "e23088e34bc8e43c821256e2c7ae5ec7",
+                "responses": {
+                    "200": {
+                        "description": "Ingrediente eliminado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/recetas/{receta}/like": {
+            "post": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Dar/quitar like (toggle)",
+                "description": "Alterna el estado de like: si existe lo elimina, si no existe lo crea",
+                "operationId": "eddfc38be8bef694304716bc3b01b124",
+                "parameters": [
+                    {
+                        "name": "receta",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Like añadido correctamente"
+                    },
+                    "200": {
+                        "description": "Like eliminado correctamente"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "404": {
+                        "description": "Receta no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/recetas/{receta}/likes/count": {
+            "get": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Obtener contador de likes",
+                "description": "Retorna el número total de likes de una receta",
+                "operationId": "e8ced5a8993bdbf028fa1220f635bbf3",
+                "parameters": [
+                    {
+                        "name": "receta",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Contador de likes obtenido"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/recetas/{receta}/likes": {
+            "get": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Listar usuarios que dieron like",
+                "description": "Obtiene la lista de usuarios que dieron like a una receta",
+                "operationId": "55b3d9c3ce7d1fee23c4e9d0ccd08a80",
+                "parameters": [
+                    {
+                        "name": "receta",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de usuarios que dieron like"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/recetas": {
             "get": {
                 "tags": [
@@ -21,6 +385,116 @@
                 "responses": {
                     "200": {
                         "description": "OK"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Recetas"
+                ],
+                "summary": "Crear una nueva receta",
+                "operationId": "42db13bb7156194a5f5dbec70e4392eb",
+                "requestBody": {
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Receta creada correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/recetas/{id}": {
+            "get": {
+                "tags": [
+                    "Recetas"
+                ],
+                "summary": "Ver una receta específica",
+                "operationId": "1ff61f91c55f464ab8afd758c1900f9e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Receta obtenida correctamente"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Recetas"
+                ],
+                "summary": "Actualizar una receta",
+                "operationId": "c71058c8cc3d6d35d5337302d638daad",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {},
+                "responses": {
+                    "200": {
+                        "description": "Receta actualizada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "No autorizado"
+                    },
+                    "404": {
+                        "description": "Receta no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Recetas"
+                ],
+                "summary": "Eliminar una receta",
+                "operationId": "bf47e92166384fa00397bcffa91088cc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Receta eliminada"
+                    },
+                    "401": {
+                        "description": "No autenticado"
+                    },
+                    "403": {
+                        "description": "No autorizado"
                     }
                 },
                 "security": [
@@ -41,6 +515,22 @@
         }
     },
     "tags": [
+        {
+            "name": "Autenticación",
+            "description": "Autenticación"
+        },
+        {
+            "name": "Comentarios",
+            "description": "Comentarios"
+        },
+        {
+            "name": "Ingredientes",
+            "description": "Ingredientes"
+        },
+        {
+            "name": "Likes",
+            "description": "Likes"
+        },
         {
             "name": "Recetas",
             "description": "Recetas"

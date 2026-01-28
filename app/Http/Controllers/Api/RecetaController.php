@@ -80,39 +80,49 @@ class RecetaController extends Controller
      *     @OA\Response(response=401, description="No autenticado")
      * )
      */
-    public function index(Request $request)
-    {
-        $query = Receta::query();
+     public function index(Request $request)
+     {
+         $query = Receta::query();
 
-        // Filtro: Búsqueda general en título y descripción
-        $query->buscar($request->query('q'));
+         // Filtro: Búsqueda general en título y descripción
+         $query->buscar($request->query('q'));
 
-        // Filtro: Por ingrediente (nuevo)
-        $query->conIngrediente($request->query('ingrediente'));
+         // Filtro: Por ingrediente (nuevo)
+         $query->conIngrediente($request->query('ingrediente'));
 
-        // Ordenación avanzada
-        $sort = $request->query('sort');
+         // Ordenación avanzada
+         $sort = $request->query('sort');
 
-        if ($sort === 'popular' || $sort === '-popular') {
-            // Ordenar por popularidad (número de likes)
-            $query->porPopularidad();
-        } else if ($sort) {
-            // Ordenación por otros campos
-            $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
-            $field = ltrim($sort, '-');
-            $query->ordenarPor($field, $direction);
-        }
+         if ($sort === 'popular' || $sort === '-popular') {
+             // Ordenar por popularidad (número de likes)
+             $query->porPopularidad();
+         } else if ($sort) {
+             // Ordenación por otros campos
+             $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
+             $field = ltrim($sort, '-');
+             $query->ordenarPor($field, $direction);
+         }
 
-        // Siempre cargar el contador de likes
-        $query->withCount('likes');
+         // Siempre cargar el contador de likes
+         $query->withCount('likes');
 
-        // Paginación
-        $perPage = min((int) $request->query('per_page', 10), 50);
-        $recetas = $query->paginate($perPage);
+         // Paginación
+         $perPage = min((int) $request->query('per_page', 10), 50);
+         $recetas = $query->paginate($perPage);
 
-        return RecetaResource::collection($recetas);
-    }
+         return RecetaResource::collection($recetas);
+     }
 
+    #[OA\Post(
+        path: "/recetas",
+        summary: "Crear una nueva receta",
+        tags: ["Recetas"],
+        security: [['bearerAuth' => []]],
+        requestBody: new OA\RequestBody(required: true),
+        responses: [
+            new OA\Response(response: 201, description: "Receta creada correctamente")
+        ]
+    )]
     /**
      * @OA\Post(
      *     path="/recetas",
@@ -176,6 +186,16 @@ class RecetaController extends Controller
         return response()->json($receta, 201);
     }
 
+    #[OA\Get(
+        path: "/recetas/{id}",
+        summary: "Ver una receta específica",
+        tags: ["Recetas"],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true)],
+        responses: [
+            new OA\Response(response: 200, description: "Receta obtenida correctamente")
+        ]
+    )]
     /**
      * @OA\Get(
      *     path="/recetas/{id}",
@@ -228,6 +248,20 @@ class RecetaController extends Controller
         return new RecetaResource($receta);
     }
 
+    #[OA\Put(
+        path: "/recetas/{id}",
+        summary: "Actualizar una receta",
+        tags: ["Recetas"],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true)],
+        requestBody: new OA\RequestBody(),
+        responses: [
+            new OA\Response(response: 200, description: "Receta actualizada"),
+            new OA\Response(response: 401, description: "No autenticado"),
+            new OA\Response(response: 403, description: "No autorizado"),
+            new OA\Response(response: 404, description: "Receta no encontrada")
+        ]
+    )]
     /**
      * @OA\Put(
      *     path="/recetas/{id}",
@@ -300,6 +334,14 @@ class RecetaController extends Controller
         return response()->json($receta);
     }
 
+    #[OA\Delete(
+        path: "/recetas/{id}",
+        summary: "Eliminar una receta",
+        tags: ["Recetas"],
+        security: [['bearerAuth' => []]],
+        parameters: [new OA\Parameter(name: 'id', in: 'path', required: true)],
+        responses: [new OA\Response(response: 200, description: "Receta eliminada"), new OA\Response(response: 401, description: "No autenticado"), new OA\Response(response: 403, description: "No autorizado")]
+    )]
     /**
      * @OA\Delete(
      *     path="/recetas/{id}",

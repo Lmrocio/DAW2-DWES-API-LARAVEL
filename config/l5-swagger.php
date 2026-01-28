@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'use_interface' => env('L5_SWAGGER_USE_INTERFACE', true),
     'default' => 'default',
     'documentations' => [
         'default' => [

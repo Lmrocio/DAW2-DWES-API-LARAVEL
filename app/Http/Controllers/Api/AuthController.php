@@ -7,12 +7,20 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use \Illuminate\Http\JsonResponse;
+use OpenApi\Attributes as OA;
 
 class AuthController extends Controller
 {
     // Guía docente: ver docs/03_controladores.md.
     //Register, Login, Logout, Me
 
+    #[OA\Post(
+        path: "/auth/register",
+        tags: ["Autenticación"],
+        summary: "Registrar un nuevo usuario",
+        requestBody: new OA\RequestBody(),
+        responses: [new OA\Response(response: 201, description: "Usuario registrado correctamente")]
+    )]
     /**
      * @OA\Post(
      *     path="/auth/register",
@@ -31,42 +39,41 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Usuario registrado correctamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="user", type="object",
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="name", type="string"),
-     *                 @OA\Property(property="email", type="string")
-     *             ),
-     *             @OA\Property(property="token", type="string", example="1|abcdefghijklmnopqrstuvwxyz")
-     *         )
+     *         description="Usuario registrado correctamente"
      *     ),
      *     @OA\Response(response=422, description="Error de validación")
      * )
      */
-    public function register(Request $request): JsonResponse
-    {
-        //Registro de usuario
-        $validated =$request->validate([
-            'name' => 'required|string|max:60',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
+     public function register(Request $request): JsonResponse
+     {
+         //Registro de usuario
+         $validated =$request->validate([
+             'name' => 'required|string|max:60',
+             'email' => 'required|string|email|max:255|unique:users',
+             'password' => 'required|string|min:8|confirmed',
+         ]);
 
-        $user= User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);
+         $user= User::create([
+             'name' => $validated['name'],
+             'email' => $validated['email'],
+             'password' => Hash::make($validated['password']),
+         ]);
 
-        $token = $user->createToken('api-token')->plainTextToken;
+         $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ],201);
-    }
+         return response()->json([
+             'user' => $user,
+             'token' => $token,
+         ],201);
+     }
 
+    #[OA\Post(
+        path: "/auth/login",
+        tags: ["Autenticación"],
+        summary: "Iniciar sesión",
+        requestBody: new OA\RequestBody(),
+        responses: [new OA\Response(response: 200, description: "Login exitoso"), new OA\Response(response: 401, description: "Credenciales inválidas")]
+    )]
     /**
      * @OA\Post(
      *     path="/auth/login",
@@ -83,42 +90,41 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Login exitoso",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="user", type="object",
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="name", type="string"),
-     *                 @OA\Property(property="email", type="string")
-     *             ),
-     *             @OA\Property(property="token", type="string", example="1|abcdefghijklmnopqrstuvwxyz")
-     *         )
+     *         description="Login exitoso"
      *     ),
      *     @OA\Response(response=401, description="Credenciales inválidas"),
      *     @OA\Response(response=422, description="Error de validación")
      * )
      */
-    public function login(Request $request): JsonResponse
-    {
-        $credentials = $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+     public function login(Request $request): JsonResponse
+     {
+         $credentials = $request->validate([
+             'email' => 'required|string|email',
+             'password' => 'required|string',
+         ]);
 
-        // Verificar credenciales, primero buscamos el usuario por email
-        $user = User::where('email', $credentials['email'])->first();
-        // Luego verificamos la contraseña
-        if (!$user || !Hash::check($credentials['password'], $user->password)) {
-            return response()->json(['message' => 'Invalid credentials'], 401);
-        }
+         // Verificar credenciales, primero buscamos el usuario por email
+         $user = User::where('email', $credentials['email'])->first();
+         // Luego verificamos la contraseña
+         if (!$user || !Hash::check($credentials['password'], $user->password)) {
+             return response()->json(['message' => 'Invalid credentials'], 401);
+         }
 
-        $token = $user->createToken('api-token')->plainTextToken;
+         $token = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ], 200);
-    }
+         return response()->json([
+             'user' => $user,
+             'token' => $token,
+         ], 200);
+     }
 
+    #[OA\Post(
+        path: "/auth/logout",
+        tags: ["Autenticación"],
+        summary: "Cerrar sesión",
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Sesión cerrada")]
+    )]
     /**
      * @OA\Post(
      *     path="/auth/logout",
@@ -136,14 +142,21 @@ class AuthController extends Controller
      *     @OA\Response(response=401, description="No autenticado")
      * )
      */
-    public function logout(Request $request): JsonResponse
-    {
-        //Logout de usuario, para ello eliminamos el token actual
-        $request->user()->currentAccessToken()->delete();
-        //devolvemos  OK
-        return response()->json(['message' => 'Sesión cerrada con éxito'],200);
-    }
+     public function logout(Request $request): JsonResponse
+     {
+         //Logout de usuario, para ello eliminamos el token actual
+         $request->user()->currentAccessToken()->delete();
+         //devolvemos  OK
+         return response()->json(['message' => 'Sesión cerrada con éxito'],200);
+     }
 
+    #[OA\Get(
+        path: "/auth/me",
+        tags: ["Autenticación"],
+        summary: "Obtener datos del usuario autenticado",
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Datos del usuario obtenidos")]
+    )]
     /**
      * @OA\Get(
      *     path="/auth/me",
@@ -163,12 +176,19 @@ class AuthController extends Controller
      *     @OA\Response(response=401, description="No autenticado")
      * )
      */
-    public function me(Request $request): JsonResponse
-    {
-        //Devolvemos los datos del usuario autenticado
-        return response()->json($request->user(),200);
-    }
+     public function me(Request $request): JsonResponse
+     {
+         //Devolvemos los datos del usuario autenticado
+         return response()->json($request->user(),200);
+     }
 
+    #[OA\Post(
+        path: "/auth/refresh",
+        tags: ["Autenticación"],
+        summary: "Refrescar token de autenticación",
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Token refrescado")]
+    )]
     /**
      * @OA\Post(
      *     path="/auth/refresh",
@@ -186,17 +206,17 @@ class AuthController extends Controller
      *     @OA\Response(response=401, description="No autenticado")
      * )
      */
-    public function refresh(Request $request): JsonResponse
-    {
-        $user = $request->user();
+     public function refresh(Request $request): JsonResponse
+     {
+         $user = $request->user();
 
-        // Eliminar el token actual
-        $request->user()->currentAccessToken()->delete();
+         // Eliminar el token actual
+         $request->user()->currentAccessToken()->delete();
 
-        // Crear un nuevo token
-        $newToken = $user->createToken('api-token')->plainTextToken;
+         // Crear un nuevo token
+         $newToken = $user->createToken('api-token')->plainTextToken;
 
-        return response()->json(['token' => $newToken], 200);
-    }
+         return response()->json(['token' => $newToken], 200);
+     }
 
 }

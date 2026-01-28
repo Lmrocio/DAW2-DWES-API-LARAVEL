@@ -7,42 +7,17 @@ use App\Http\Resources\ComentarioResource;
 use App\Models\Comentario;
 use App\Models\Receta;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class ComentarioController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/recetas/{receta}/comentarios",
-     *     tags={"Comentarios"},
-     *     summary="Listar comentarios de una receta",
-     *     description="Obtiene todos los comentarios de una receta ordenados por más reciente primero",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="receta",
-     *         in="path",
-     *         description="ID de la receta",
-     *         required=true,
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Lista de comentarios obtenida correctamente",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="receta_id", type="integer", example=1),
-     *                 @OA\Property(property="user_id", type="integer", example=2),
-     *                 @OA\Property(property="user_name", type="string", example="Juan Pérez"),
-     *                 @OA\Property(property="texto", type="string", example="¡Excelente receta!"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time")
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="No autenticado"),
-     *     @OA\Response(response=404, description="Receta no encontrada")
-     * )
-     */
+    #[OA\Get(
+        path: "/recetas/{receta}/comentarios",
+        summary: "Listar comentarios de una receta",
+        tags: ["Comentarios"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "OK")]
+    )]
     public function index(Receta $receta)
     {
         // Cargar comentarios con información del usuario
@@ -51,44 +26,13 @@ class ComentarioController extends Controller
         return ComentarioResource::collection($comentarios);
     }
 
-    /**
-     * @OA\Post(
-     *     path="/recetas/{receta}/comentarios",
-     *     tags={"Comentarios"},
-     *     summary="Crear un comentario",
-     *     description="Crea un nuevo comentario en una receta. Cualquier usuario autenticado puede comentar",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="receta",
-     *         in="path",
-     *         description="ID de la receta",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"texto"},
-     *             @OA\Property(property="texto", type="string", example="¡Esta receta me encantó!", maxLength=1000)
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Comentario creado correctamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer", example=1),
-     *             @OA\Property(property="receta_id", type="integer", example=1),
-     *             @OA\Property(property="user_id", type="integer", example=1),
-     *             @OA\Property(property="user_name", type="string", example="Admin User"),
-     *             @OA\Property(property="texto", type="string", example="¡Esta receta me encantó!"),
-     *             @OA\Property(property="created_at", type="string", format="date-time")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="No autenticado"),
-     *     @OA\Response(response=404, description="Receta no encontrada"),
-     *     @OA\Response(response=422, description="Error de validación")
-     * )
-     */
+    #[OA\Post(
+        path: "/recetas/{receta}/comentarios",
+        summary: "Crear un comentario",
+        tags: ["Comentarios"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 201, description: "Comentario creado")]
+    )]
     public function store(Request $request, Receta $receta)
     {
         // Cualquier usuario autenticado puede comentar
@@ -109,77 +53,26 @@ class ComentarioController extends Controller
             ->setStatusCode(201);
     }
 
-    /**
-     * @OA\Get(
-     *     path="/comentarios/{comentario}",
-     *     tags={"Comentarios"},
-     *     summary="Ver un comentario específico",
-     *     description="Obtiene los detalles de un comentario",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="comentario",
-     *         in="path",
-     *         description="ID del comentario",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Comentario obtenido correctamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer"),
-     *             @OA\Property(property="receta_id", type="integer"),
-     *             @OA\Property(property="user_id", type="integer"),
-     *             @OA\Property(property="user_name", type="string"),
-     *             @OA\Property(property="texto", type="string"),
-     *             @OA\Property(property="created_at", type="string", format="date-time")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="No autenticado"),
-     *     @OA\Response(response=404, description="Comentario no encontrado")
-     * )
-     */
+    #[OA\Get(
+        path: "/comentarios/{comentario}",
+        summary: "Ver un comentario específico",
+        tags: ["Comentarios"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "OK")]
+    )]
     public function show(Comentario $comentario)
     {
         $comentario->load('user');
         return new ComentarioResource($comentario);
     }
 
-    /**
-     * @OA\Put(
-     *     path="/comentarios/{comentario}",
-     *     tags={"Comentarios"},
-     *     summary="Actualizar un comentario",
-     *     description="Actualiza un comentario. Solo el autor o admin pueden hacerlo",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="comentario",
-     *         in="path",
-     *         description="ID del comentario",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             required={"texto"},
-     *             @OA\Property(property="texto", type="string", example="Comentario actualizado")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Comentario actualizado correctamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="id", type="integer"),
-     *             @OA\Property(property="texto", type="string")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="No autenticado"),
-     *     @OA\Response(response=403, description="No autorizado"),
-     *     @OA\Response(response=404, description="Comentario no encontrado"),
-     *     @OA\Response(response=422, description="Error de validación")
-     * )
-     */
+    #[OA\Put(
+        path: "/comentarios/{comentario}",
+        summary: "Actualizar un comentario",
+        tags: ["Comentarios"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Comentario actualizado")]
+    )]
     public function update(Request $request, Comentario $comentario)
     {
         // Autorización: solo el autor o admin
@@ -195,32 +88,13 @@ class ComentarioController extends Controller
         return new ComentarioResource($comentario);
     }
 
-    /**
-     * @OA\Delete(
-     *     path="/comentarios/{comentario}",
-     *     tags={"Comentarios"},
-     *     summary="Eliminar un comentario",
-     *     description="Elimina un comentario. Solo el autor o admin pueden hacerlo",
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="comentario",
-     *         in="path",
-     *         description="ID del comentario",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Comentario eliminado correctamente",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Comentario eliminado correctamente")
-     *         )
-     *     ),
-     *     @OA\Response(response=401, description="No autenticado"),
-     *     @OA\Response(response=403, description="No autorizado"),
-     *     @OA\Response(response=404, description="Comentario no encontrado")
-     * )
-     */
+    #[OA\Delete(
+        path: "/comentarios/{comentario}",
+        summary: "Eliminar un comentario",
+        tags: ["Comentarios"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Comentario eliminado")]
+    )]
     public function destroy(Comentario $comentario)
     {
         // Autorización: solo el autor o admin

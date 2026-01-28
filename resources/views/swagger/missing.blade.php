@@ -14,26 +14,7 @@
     </style>
 </head>
 <body>
-    <h1>Documentación Swagger no generada</h1>
-    <p>La especificación OpenAPI no se ha generado todavía o la UI de Swagger no está publicada.</p>
-
-    <div class="box">
-        <h2>Instrucciones rápidas</h2>
-        <ol>
-            <li>Instalar paquete: <code>composer require darkaonline/l5-swagger</code></li>
-            <li>Publicar configuración y assets: <code>php artisan vendor:publish --provider="L5Swagger\L5SwaggerServiceProvider"</code></li>
-            <li>Generar spec OpenAPI: <code>php artisan l5-swagger:generate</code></li>
-            <li>Crear enlace simbólico (si aún no existe): <code>php artisan storage:link</code></li>
-            <li>Abrir en el navegador: <a href="/api/documentation">/api/documentation</a> o <a href="/vendor/swagger-ui/index.html">/vendor/swagger-ui/index.html</a></li>
-        </ol>
-
-        <p>Si su entorno no dispone de Internet para ejecutar <code>composer require</code>, consulte <code>docs/13_swagger.md</code> para instrucciones manuales.</p>
-
-        <p><a class="btn" href="/api/documentation">Reintentar /api/documentation</a></p>
-    </div>
-
-    <h3>Detalles técnicos</h3>
-    <p>Ruta del JSON generado (si existe): <code>{{ storage_path('api-docs/api-docs.json') }}</code></p>
-    <p>Ruta pública de Swagger UI esperada: <code>{{ public_path('vendor/swagger-ui') }}</code></p>
+    <h1>Swagger UI - vista deshabilitada</h1>
+    <p>Esta vista ha sido deshabilitada para permitir que l5-swagger gestione la UI en /api/documentation.</p>
 </body>
 </html>

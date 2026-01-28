@@ -7,9 +7,17 @@ use App\Http\Resources\IngredienteResource;
 use App\Models\Ingrediente;
 use App\Models\Receta;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 
 class IngredienteController extends Controller
 {
+    #[OA\Get(
+        path: "/recetas/{receta}/ingredientes",
+        summary: "Listar ingredientes de una receta",
+        tags: ["Ingredientes"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "OK")]
+    )]
     /**
      * @OA\Get(
      *     path="/recetas/{receta}/ingredientes",
@@ -48,6 +56,13 @@ class IngredienteController extends Controller
         return IngredienteResource::collection($ingredientes);
     }
 
+    #[OA\Post(
+        path: "/recetas/{receta}/ingredientes",
+        summary: "Agregar un ingrediente a una receta",
+        tags: ["Ingredientes"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 201, description: "Ingrediente creado")]
+    )]
     /**
      * @OA\Post(
      *     path="/recetas/{receta}/ingredientes",
@@ -106,6 +121,13 @@ class IngredienteController extends Controller
             ->setStatusCode(201);
     }
 
+    #[OA\Get(
+        path: "/ingredientes/{ingrediente}",
+        summary: "Ver un ingrediente específico",
+        tags: ["Ingredientes"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "OK")]
+    )]
     /**
      * @OA\Get(
      *     path="/ingredientes/{ingrediente}",
@@ -140,6 +162,13 @@ class IngredienteController extends Controller
         return new IngredienteResource($ingrediente);
     }
 
+    #[OA\Put(
+        path: "/ingredientes/{ingrediente}",
+        summary: "Actualizar un ingrediente",
+        tags: ["Ingredientes"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Ingrediente actualizado")]
+    )]
     /**
      * @OA\Put(
      *     path="/ingredientes/{ingrediente}",
@@ -186,6 +215,13 @@ class IngredienteController extends Controller
         return new IngredienteResource($ingrediente);
     }
 
+    #[OA\Delete(
+        path: "/ingredientes/{ingrediente}",
+        summary: "Eliminar un ingrediente",
+        tags: ["Ingredientes"],
+        security: [['bearerAuth' => []]],
+        responses: [new OA\Response(response: 200, description: "Ingrediente eliminado")]
+    )]
     /**
      * @OA\Delete(
      *     path="/ingredientes/{ingrediente}",
