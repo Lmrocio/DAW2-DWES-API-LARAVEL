@@ -7,9 +7,19 @@ use App\Models\Receta;
 use Illuminate\Http\Request;
 use App\Services\RecetaService;
 use App\Http\Resources\RecetaResource;
+use OpenApi\Attributes as OA;
 
 class RecetaController extends Controller
 {
+    #[OA\Get(
+        path: "/recetas",
+        summary: "Listado de recetas",
+        tags: ["Recetas"],
+        security: [['bearerAuth' => []]],
+        responses: [
+            new OA\Response(response: 200, description: "OK")
+        ]
+    )]
     /**
      * @OA\Get(
      *     path="/recetas",
