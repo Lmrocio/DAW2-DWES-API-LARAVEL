@@ -1,0 +1,1 @@
+This directory contains Swagger UI assets copied from vendor/swagger-api/swagger-ui/dist. Do not modify directly.
