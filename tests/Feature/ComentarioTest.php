@@ -113,15 +113,17 @@ class ComentarioTest extends TestCase
             ->getJson("/api/recetas/{$receta->id}/comentarios");
 
         $response->assertStatus(200)
-            ->assertJsonCount(3)
+            ->assertJsonCount(3, 'data')
             ->assertJsonStructure([
-                '*' => [
-                    'id',
-                    'receta_id',
-                    'user_id',
-                    'user_name',
-                    'texto',
-                    'created_at',
+                'data' => [
+                    '*' => [
+                        'id',
+                        'receta_id',
+                        'user_id',
+                        'user_name',
+                        'texto',
+                        'created_at',
+                    ]
                 ]
             ]);
     }
@@ -270,18 +272,20 @@ class ComentarioTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'titulo',
-                'comentarios' => [
-                    '*' => [
-                        'id',
-                        'texto',
-                        'user_name',
-                    ]
-                ],
-                'comentarios_count',
+                'data' => [
+                    'id',
+                    'titulo',
+                    'comentarios' => [
+                        '*' => [
+                            'id',
+                            'texto',
+                            'user_name',
+                        ]
+                    ],
+                    'comentarios_count',
+                ]
             ])
-            ->assertJsonFragment(['comentarios_count' => 2]);
+            ->assertJson(['data' => ['comentarios_count' => 2]]);
     }
 
     /**
@@ -338,7 +342,7 @@ class ComentarioTest extends TestCase
 
         $response->assertStatus(200);
 
-        $comentarios = $response->json();
+        $comentarios = $response->json('data');
 
         // El primero debe ser el más reciente
         $this->assertEquals('Tercero (más reciente)', $comentarios[0]['texto']);

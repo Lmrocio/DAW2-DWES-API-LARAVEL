@@ -35,7 +35,7 @@ class IngredienteTest extends TestCase
             ->getJson("/api/recetas/{$receta->id}/ingredientes");
 
         $response->assertStatus(200)
-            ->assertJsonCount(3);
+            ->assertJsonCount(3, 'data');
     }
 
     /**
@@ -260,14 +260,16 @@ class IngredienteTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'titulo',
-                'ingredientes' => [
-                    '*' => [
-                        'id',
-                        'nombre',
-                        'cantidad',
-                        'unidad',
+                'data' => [
+                    'id',
+                    'titulo',
+                    'ingredientes' => [
+                        '*' => [
+                            'id',
+                            'nombre',
+                            'cantidad',
+                            'unidad',
+                        ]
                     ]
                 ]
             ])

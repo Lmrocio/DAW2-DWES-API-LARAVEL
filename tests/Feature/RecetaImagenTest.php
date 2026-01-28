@@ -252,13 +252,15 @@ class RecetaImagenTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'titulo',
-                'imagen_url',
+                'data' => [
+                    'id',
+                    'titulo',
+                    'imagen_url',
+                ]
             ]);
 
         // Verificar que la URL es completa (contiene http)
-        $data = $response->json();
+        $data = $response->json('data');
         $this->assertNotNull($data['imagen_url']);
         $this->assertStringContainsString('storage/recetas/', $data['imagen_url']);
     }
@@ -279,7 +281,9 @@ class RecetaImagenTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJson([
-                'imagen_url' => null,
+                'data' => [
+                    'imagen_url' => null,
+                ]
             ]);
     }
 

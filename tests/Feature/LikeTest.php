@@ -200,10 +200,12 @@ class LikeTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'titulo',
-                'likes_count',
-                'liked_by_user',
+                'data' => [
+                    'id',
+                    'titulo',
+                    'likes_count',
+                    'liked_by_user',
+                ]
             ]);
     }
 
@@ -220,9 +222,7 @@ class LikeTest extends TestCase
             ->getJson("/api/recetas/{$receta->id}");
 
         $response->assertStatus(200)
-            ->assertJson([
-                'liked_by_user' => false,
-            ]);
+            ->assertJson([ 'data' => ['liked_by_user' => false] ]);
 
         // Dar like
         Like::create([
@@ -235,9 +235,7 @@ class LikeTest extends TestCase
             ->getJson("/api/recetas/{$receta->id}");
 
         $response->assertStatus(200)
-            ->assertJson([
-                'liked_by_user' => true,
-            ]);
+            ->assertJson([ 'data' => ['liked_by_user' => true] ]);
     }
 
     /**

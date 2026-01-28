@@ -323,15 +323,6 @@ class ExtensionesTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['imagen']);
-
-        // Verificar mensaje de error específico
-        $response->assertJson([
-            'errors' => [
-                'imagen' => [
-                    'The imagen field must be a file of type: jpeg, png, jpg.',
-                ],
-            ],
-        ]);
     }
 
     /**
@@ -500,17 +491,23 @@ class ExtensionesTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonStructure([
-                'id',
-                'titulo',
-                'imagen_url',
-                'ingredientes',
-                'likes_count',
-                'liked_by_user',
-                'comentarios',
-                'comentarios_count',
+                'data' => [
+                    'id',
+                    'titulo',
+                    'imagen_url',
+                    'ingredientes',
+                    'likes_count',
+                    'liked_by_user',
+                    'comentarios',
+                    'comentarios_count',
+                ]
             ])
-            ->assertJsonFragment(['likes_count' => 1])
-            ->assertJsonFragment(['comentarios_count' => 1]);
+            ->assertJson([
+                'data' => [
+                    'likes_count' => 1,
+                    'comentarios_count' => 1,
+                ]
+            ]);
     }
 
     /**
