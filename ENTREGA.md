@@ -250,6 +250,11 @@ En lugar de un archivo YAML/JSON separado, uso anotaciones PHP (PHPDoc):
 public function index(Request $request)
 ```
 
+<img width="1880" height="700" alt="Captura de pantalla 2026-01-28 104656" src="https://github.com/user-attachments/assets/69f8c408-dd1d-4af2-9c9d-869a8c2b1c32" />
+<img width="1905" height="869" alt="Captura de pantalla 2026-01-28 104649" src="https://github.com/user-attachments/assets/8b0e1a3c-8b2b-43ce-898c-37c506c561b5" />
+
+
+
 ---
 
 ## Tests implementados
