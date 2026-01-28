@@ -133,6 +133,21 @@ class Receta extends Model
     }
 
     /**
+     * Scope: Filtrar recetas con mínimo número de likes
+     *
+     * Ejemplo: Receta::conMinLikes(10)->get()
+     */
+    public function scopeConMinLikes($query, ?int $minLikes)
+    {
+        if (!$minLikes) {
+            return $query;
+        }
+
+        return $query->withCount('likes')
+            ->having('likes_count', '>=', $minLikes);
+    }
+
+    /**
      * Scope: Búsqueda general en título y descripción
      *
      * Ejemplo: Receta::buscar('paella')->get()

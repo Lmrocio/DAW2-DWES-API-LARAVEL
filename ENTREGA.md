@@ -2,8 +2,7 @@
 
 **Alumna:** Rocío Luque Montes  
 **Módulo:** DWES - Desarrollo Web en Entorno Servidor  
-**Curso:** 2º DAW  
-**Fecha:** 27 de enero de 2026  
+**Curso:** 2º DAW   
 
 ---
 
@@ -22,13 +21,13 @@
 - `receta_id` (foreign key)
 
 **Funcionalidades:**
-- ✅ CRUD completo de ingredientes
-- ✅ Relación 1:N con Recetas (una receta tiene muchos ingredientes)
-- ✅ Rutas anidadas: `/api/recetas/{receta}/ingredientes`
-- ✅ Autorización: solo el propietario de la receta o admin pueden modificar ingredientes
-- ✅ Los ingredientes se incluyen automáticamente al consultar una receta
-- ✅ Validación de campos requeridos
-- ✅ Cascade on delete: si se elimina una receta, se eliminan sus ingredientes
+-  CRUD completo de ingredientes
+-  Relación 1:N con Recetas (una receta tiene muchos ingredientes)
+-  Rutas anidadas: `/api/recetas/{receta}/ingredientes`
+-  Autorización: solo el propietario de la receta o admin pueden modificar ingredientes
+-  Los ingredientes se incluyen automáticamente al consultar una receta
+-  Validación de campos requeridos
+-  Cascade on delete: si se elimina una receta, se eliminan sus ingredientes
 
 **Decisión técnica - ¿Por qué 1:N?**
 
@@ -60,14 +59,14 @@ He elegido una relación **1:N (Uno a Muchos)** porque:
 - `Like` -> belongsTo(User::class) y belongsTo(Receta::class)
 
 **Funcionalidades:**
-- ✅ Dar like a una receta (POST)
-- ✅ Quitar like (mismo endpoint: lógica explícita de crear/eliminar)
-- ✅ Un usuario solo puede dar un like por receta (constraint UNIQUE)
-- ✅ Contador de likes en cada receta (`likes_count`)
-- ✅ Indicador de si el usuario actual dio like (`liked_by_user`)
-- ✅ Listar usuarios que dieron like a una receta (a través del modelo `Like`)
-- ✅ Obtener el contador de likes
-- ✅ Cascade on delete: si se elimina usuario o receta, se eliminan los likes
+-  Dar like a una receta (POST)
+-  Quitar like (mismo endpoint: lógica explícita de crear/eliminar)
+-  Un usuario solo puede dar un like por receta (constraint UNIQUE)
+-  Contador de likes en cada receta (`likes_count`)
+-  Indicador de si el usuario actual dio like (`liked_by_user`)
+-  Listar usuarios que dieron like a una receta (a través del modelo `Like`)
+-  Obtener el contador de likes
+-  Cascade on delete: si se elimina usuario o receta, se eliminan los likes
 
 **Decisión técnica - ¿Por qué modelar `Like` como entidad (1:N) en lugar de usar `belongsToMany()` (N:M pura)?**
 
@@ -99,15 +98,15 @@ He decidido evitar una relación Muchos a Muchos (N:M) pura para reducir la comp
 - `receta_id` (foreign key)
 
 **Funcionalidades:**
-- ✅ CRUD completo de comentarios
-- ✅ Relación 1:N con Recetas (una receta tiene muchos comentarios)
-- ✅ Relación 1:N con Users (un usuario puede hacer muchos comentarios)
-- ✅ Cualquier usuario autenticado puede comentar
-- ✅ Solo el autor o admin pueden editar/eliminar un comentario (403 si no)
-- ✅ Los comentarios incluyen el nombre del usuario automáticamente
-- ✅ Ordenados por más reciente primero
-- ✅ Contador de comentarios en RecetaResource
-- ✅ Cascade on delete: si se elimina receta o usuario, se eliminan los comentarios
+-  CRUD completo de comentarios
+-  Relación 1:N con Recetas (una receta tiene muchos comentarios)
+-  Relación 1:N con Users (un usuario puede hacer muchos comentarios)
+-  Cualquier usuario autenticado puede comentar
+-  Solo el autor o admin pueden editar/eliminar un comentario (403 si no)
+-  Los comentarios incluyen el nombre del usuario automáticamente
+-  Ordenados por más reciente primero
+-  Contador de comentarios en RecetaResource
+-  Cascade on delete: si se elimina receta o usuario, se eliminan los comentarios
 
 **Decisión técnica - Autorización:**
 
@@ -123,21 +122,21 @@ Esta decisión permite:
 
 ---
 
-### Extensiones opcionales (BONUS)
+### Extensiones opcionales
 
 #### 4. Imagen del Plato Final
 
 **Campo:** `imagen_url` en tabla `recetas` (nullable)
 
 **Funcionalidades:**
-- ✅ Subida de imagen al crear receta
-- ✅ Subida de imagen al actualizar receta
-- ✅ Validación de tipo: solo jpeg, png, jpg
-- ✅ Validación de tamaño: máximo 2MB
-- ✅ Almacenamiento en `storage/app/public/recetas/`
-- ✅ Accessor para URL absoluta accesible desde la API
-- ✅ Eliminación automática de imagen antigua al actualizar
-- ✅ Eliminación automática de imagen al borrar receta
+-  Subida de imagen al crear receta
+-  Subida de imagen al actualizar receta
+-  Validación de tipo: solo jpeg, png, jpg
+-  Validación de tamaño: máximo 2MB
+-  Almacenamiento en `storage/app/public/recetas/`
+-  Accessor para URL absoluta accesible desde la API
+-  Eliminación automática de imagen antigua al actualizar
+-  Eliminación automática de imagen al borrar receta
 
 **Decisión técnica - Almacenamiento:**
 
@@ -219,13 +218,13 @@ $query->conIngrediente($ingrediente);
 **Paquete:** `darkaonline/l5-swagger`
 
 **Funcionalidades:**
-- ✅ Interfaz Swagger UI accesible en navegador
-- ✅ 10 endpoints documentados (Recetas + Ingredientes)
-- ✅ Autenticación Bearer Token configurada
-- ✅ Ejemplos de request/response
-- ✅ Validaciones documentadas
-- ✅ Códigos de respuesta HTTP
-- ✅ Testing integrado desde el navegador
+-  Interfaz Swagger UI accesible en navegador
+-  10 endpoints documentados (Recetas + Ingredientes)
+-  Autenticación Bearer Token configurada
+-  Ejemplos de request/response
+-  Validaciones documentadas
+-  Códigos de respuesta HTTP
+-  Testing integrado desde el navegador
 
 **Decisión técnica - Anotaciones en código:**
 
@@ -255,22 +254,22 @@ public function index(Request $request)
 
 ## Tests implementados
 
-**Total de tests:** ~85+ tests
+**Total de tests:** 103 tests
 
 **Cobertura:**
-- ✅ IngredienteTest: 11 tests (CRUD + autorización)
-- ✅ LikeTest: 12 tests (toggle + validaciones)
-- ✅ ComentarioTest: 14 tests (CRUD + autorización)
-- ✅ RecetaImagenTest: 12 tests (validación de formatos y tamaños)
-- ✅ RecetaFiltrosAvanzadosTest: 13 tests (filtros + ordenación)
-- ✅ **ExtensionesTest: 23 tests** (verificación final de requisitos críticos)
+-  IngredienteTest: 11 tests (CRUD + autorización)
+-  LikeTest: 12 tests (toggle + validaciones)
+-  ComentarioTest: 14 tests (CRUD + autorización)
+-  RecetaImagenTest: 12 tests (validación de formatos y tamaños)
+-  RecetaFiltrosAvanzadosTest: 13 tests (filtros + ordenación)
+-  **ExtensionesTest: 23 tests** (verificación final de requisitos críticos)
 
 **Tests críticos verificados:**
-- ✅ Usuario no puede borrar comentario de otro (403)
-- ✅ Usuario puede dar like y el contador sube
-- ✅ No se pueden subir archivos que no sean imágenes
-- ✅ No hay regresiones en endpoints existentes
-- ✅ Cascade delete funciona correctamente
+-  Usuario no puede borrar comentario de otro (403)
+-  Usuario puede dar like y el contador sube
+-  No se pueden subir archivos que no sean imágenes
+-  No hay regresiones en endpoints existentes
+-  Cascade delete funciona correctamente
 
 ---
 
@@ -687,7 +686,7 @@ http GET :8000/api/recetas/1 \
 
 ## Acceso a la UI de Swagger
 
-### ⚠️ NOTA IMPORTANTE - Swagger se sirve desde `storage/api-docs/api-docs.json`
+### NOTA IMPORTANTE - Swagger se sirve desde `storage/api-docs/api-docs.json`
 
 El archivo JSON de la especificación OpenAPI ya está **pre-generado** en `storage/api-docs/api-docs.json`. 
 
@@ -827,12 +826,12 @@ Ahora puedes probar cualquier endpoint directamente desde el navegador:
 
 ### Ventajas de Swagger UI
 
-✅ **Testing sin Postman:** Probar endpoints directamente desde el navegador  
-✅ **Documentación visual:** Ver estructura de request/response  
-✅ **Ejemplos pre-llenados:** Valores de ejemplo en cada endpoint  
-✅ **Descubrimiento de API:** Explorar todos los endpoints disponibles  
-✅ **Validación inmediata:** Ver errores de validación en tiempo real  
-✅ **Exportable:** Descargar la especificación OpenAPI para importar en Postman/Insomnia  
+ **Testing sin Postman:** Probar endpoints directamente desde el navegador  
+ **Documentación visual:** Ver estructura de request/response  
+ **Ejemplos pre-llenados:** Valores de ejemplo en cada endpoint  
+ **Descubrimiento de API:** Explorar todos los endpoints disponibles  
+ **Validación inmediata:** Ver errores de validación en tiempo real  
+ **Exportable:** Descargar la especificación OpenAPI para importar en Postman/Insomnia  
 
 ---
 
@@ -901,29 +900,490 @@ php artisan l5-swagger:generate
 
 ---
 
-## Comandos de verificación
+## Decisiones de Diseño
 
+### Arquitectura de la Aplicación
+
+Este proyecto sigue una arquitectura en capas típica de Laravel, con énfasis en separación de responsabilidades:
+
+#### 1. **Controladores Delgados (Thin Controllers)**
+
+Los controladores actúan únicamente como coordinadores entre la petición HTTP y la lógica de negocio:
+
+```php
+public function store(Request $request, RecetaService $recetaService) {
+    $data = $request->validate([...]);
+    $imagenUrl = $recetaService->handleImageUpload($request->file('imagen'));
+    return response()->json($receta, 201);
+}
+```
+
+**Ventajas:**
+- Testeo más sencillo (cada capa se prueba independientemente)
+- Reutilización de lógica en múltiples controladores
+- Código más mantenible y legible
+
+#### 2. **Service Layer para Lógica de Negocio**
+
+`RecetaService` encapsula:
+- Gestión de imágenes (subida, eliminación)
+- Aplicación de filtros avanzados
+- Validaciones de negocio (ej: receta publicada no se puede modificar)
+
+**Ejemplo de regla de negocio:**
+```php
+public function assertCanBeModified(Receta $receta): void {
+    if ($receta->publicada) {
+        throw new DomainException('No se puede modificar una receta ya publicada');
+    }
+}
+```
+
+**Beneficios:**
+- Centralización de reglas de negocio
+- Excepciones personalizadas (`DomainException`) capturadas en `bootstrap/app.php`
+- Fácil extensión sin modificar controladores
+
+#### 3. **Policies para Autorización**
+
+Cada modelo tiene su Policy (RecetaPolicy, ComentarioPolicy, IngredientePolicy):
+
+```php
+// Solo el dueño o admin pueden modificar
+public function update(User $user, Receta $receta): bool {
+    if ($user->hasRole('admin')) return true;
+    return $user->id === $receta->user_id;
+}
+```
+
+**Decisión técnica:** Uso de Spatie Permissions para roles
+
+**Ventajas:**
+- Chequeos consistentes en toda la aplicación
+- Testeo de autorización independiente
+- Auditoría clara de permisos
+
+#### 4. **Eloquent Scopes para Consultas Complejas**
+
+Los scopes encapsulan lógica de consultas en el modelo:
+
+```php
+public function scopeConIngrediente($query, ?string $ingrediente) {
+    if (!$ingrediente) return $query;
+    return $query->whereHas('ingredientes', function ($q) use ($ingrediente) {
+        $q->where('nombre', 'ILIKE', "%{$ingrediente}%");
+    });
+}
+```
+
+**Beneficios:**
+- Reutilización en múltiples partes del código
+- Query builder fluido y legible
+- Testing independiente de cada filtro
+
+#### 5. **API Resources para Respuestas JSON**
+
+Todos los endpoints devuelven JSON estructurado mediante Resources:
+
+```php
+return RecetaResource::collection($recetas);
+return new RecetaResource($receta);       
+```
+
+**Ventaja:** Estructura consistente en toda la API, fácil de consumir desde frontend
+
+### Decisiones Técnicas Clave
+
+#### **Relación 1:N para Ingredientes (vs N:M)**
+
+**Decisión:** Usar `ingredientes` con `receta_id` (1:N)
+
+**Justificación:**
+- **Contexto docente:** Simplicidad y claridad conceptual
+- **Realidad del dominio:** Un ingrediente con cantidad específica pertenece a una sola receta
+- **Ejemplo:** "400g de arroz" para Paella ≠ "200g de arroz" para Risotto
+- **Alternativa descartada:** Tabla pivot `receta_ingrediente` innecesariamente compleja
+
+**Ventajas:**
+- Consultas más simples (`$receta->ingredientes`)
+- No requiere gestión de pivot
+- Cascade delete automático
+
+#### **Entidad Like como Modelo (vs belongsToMany puro)**
+
+**Decisión:** Tabla `likes` con modelo `Like` y relaciones 1:N
+
+**Justificación:**
+- **Trazabilidad:** Cada like es un objeto con identidad (`id`, `created_at`)
+- **Extensibilidad:** Fácil añadir campos futuros (tipo de reacción, IP)
+- **Integridad:** Restricción `UNIQUE(user_id, receta_id)` garantiza unicidad
+- **Claridad:** Lógica explícita de crear/eliminar vs `toggle()` implícito
+
+**Comparación:**
+```php
+$user->recetas()->toggle($receta->id);
+
+$like = Like::where(...)->first();
+$like ? $like->delete() : Like::create(...);
+```
+
+**Ventajas sobre N:M puro:**
+- Mejor para auditoría y analytics
+- Tests más claros (verificar existencia de modelo)
+- Políticas de autorización aplicables si se requiere
+
+#### **Sanctum para Autenticación (vs JWT puro)**
+
+**Decisión:** Laravel Sanctum con tokens de API
+
+**Justificación:**
+- **Simplicidad:** Integración nativa con Laravel
+- **Seguridad:** Tokens hasheados en BD, revocables
+- **Stateless:** Ideal para APIs
+- **Mobile-ready:** Compatible con apps móviles
+
+**Alternativas descartadas:**
+- JWT (tymon/jwt-auth): Mayor complejidad, dependencia externa
+- Passport (OAuth2): Demasiado complejo para este contexto
+
+#### **Almacenamiento de Imágenes en Disco Public**
+
+**Decisión:** `storage/app/public/recetas/` con enlace simbólico
+
+**Justificación:**
+- **Performance:** Servidor web sirve archivos estáticos directamente
+- **Simplicidad:** No requiere controlador para servir imágenes
+- **Portabilidad:** URL relativa en BD, absoluta en API (accessor)
+
+**Comando necesario:** `php artisan storage:link` (una sola vez)
+
+**Alternativas descartadas:**
+- S3/Cloud Storage: No necesario en contexto educativo local
+- Codificar imágenes en Base64 en BD: Ineficiente y dificulta cache
+
+#### **Validación de Ingredientes: Unidades Específicas**
+
+**Decisión:** Validar `unidad` con lista cerrada (whitelist)
+
+```php
+'unidad' => 'required|string|in:g,kg,ml,l,ud,cucharada,cucharadita,taza,pizca'
+```
+
+**Justificación:**
+- **Consistencia:** Evita variaciones ("gramos" vs "g" vs "gr")
+- **UX:** Frontend puede ofrecer dropdown en vez de input libre
+- **Validación:** Rechaza valores inválidos tempranamente (422)
+
+**Adicional:** `cantidad` validada como `numeric|min:0.01` para evitar cantidades negativas o cero
+
+---
+
+## Manual de Pruebas
+
+### Requisitos Previos
+
+**Software necesario:**
+- PHP 8.2+
+- Composer
+- Base de datos (SQLite para tests, PostgreSQL/MySQL para desarrollo)
+- Git
+
+**Instalación inicial:**
 ```bash
-# 1. Ejecutar migraciones
+# 1. Clonar repositorio
+git clone <url-del-repo>
+cd DAW2-DWES-API-LARAVEL
+
+# 2. Instalar dependencias
+composer install
+
+# 3. Configurar entorno
+cp .env.example .env
+php artisan key:generate
+
+# 4. Configurar base de datos en .env
+# Para tests: SQLite automático (no requiere configuración)
+# Para desarrollo: Configurar DB_CONNECTION, DB_DATABASE, etc.
+
+# 5. Ejecutar migraciones
 php artisan migrate
 
-# 2. Crear enlace simbólico para imágenes (una sola vez)
+# 6. (Opcional) Seeders para datos de prueba
+php artisan db:seed
+
+# 7. Crear enlace simbólico para imágenes
 php artisan storage:link
+```
 
-# 3. Ejecutar todos los tests
+---
+
+### Ejecutar Tests
+
+#### **Ejecutar TODOS los tests**
+
+```bash
 php artisan test
+```
 
-# Resultado esperado: ~85+ tests passed ✅
+**Resultado esperado:**
+```
+PASS  Tests\Feature\IngredienteTest
+✓ listar ingredientes de una receta                    0.05s
+✓ agregar ingrediente requiere autorizacion            0.03s
+...
 
-# 4. Swagger ya está pre-generado, accede a:
-# http://localhost/api/documentation
-# (NO necesitas ejecutar: php artisan l5-swagger:generate)
+PASS  Tests\Feature\LikeTest
+✓ usuario puede dar like y contador sube               0.04s
+✓ toggle like funciona correctamente                   0.05s
+...
 
-# 5. Ver rutas de la API
-php artisan route:list --path=api
+PASS  Tests\Feature\ComentarioTest
+✓ usuario no puede borrar comentario de otro           0.06s
+✓ admin puede borrar cualquier comentario              0.04s
+...
 
-# 6. (Opcional) Si necesitas regenerar Swagger
-php artisan l5-swagger:generate
+Tests:    85 passed (340 assertions)
+Duration: 15.23s
+```
+
+---
+
+#### **Ejecutar tests de un archivo específico**
+
+```bash
+# Solo tests de Ingredientes
+php artisan test --filter=IngredienteTest
+
+# Solo tests de Likes
+php artisan test --filter=LikeTest
+
+# Solo tests de Comentarios
+php artisan test --filter=ComentarioTest
+
+# Solo tests de imágenes
+php artisan test --filter=RecetaImagenTest
+
+# Solo tests de extensiones críticas
+php artisan test --filter=ExtensionesTest
+```
+
+---
+
+#### **Ejecutar un test específico**
+
+```bash
+# Un solo test por nombre del método
+php artisan test --filter=test_usuario_no_puede_borrar_comentario_de_otro_usuario
+```
+
+---
+
+#### **Ver cobertura de tests (opcional)**
+
+Si tienes Xdebug instalado:
+
+```bash
+php artisan test --coverage
+```
+
+**Objetivo:** Mínimo 80% de cobertura en controladores, models y services
+
+---
+
+### Interpretación de Resultados
+
+#### ** Test Passed (Verde)**
+
+```
+PASS  Tests\Feature\LikeTest
+✓ usuario puede dar like y contador sube    0.04s
+```
+
+**Significa:**
+- La funcionalidad funciona correctamente
+- No hay errores de lógica ni validación
+- El comportamiento esperado coincide con la implementación
+
+---
+
+#### ** Test Failed (Rojo)**
+
+```
+FAILED  Tests\Feature\ComentarioTest > usuario no puede borrar comentario de otro
+Expected status code 403 but received 200.
+```
+
+**Significa:**
+- La funcionalidad NO cumple con el requisito esperado
+- En este caso: Falta autorización (ComentarioPolicy)
+
+**Cómo resolver:**
+1. Leer el mensaje de error
+2. Identificar el archivo donde falla (`ComentarioTest.php`)
+3. Revisar el controlador/policy correspondiente (`ComentarioController`, `ComentarioPolicy`)
+4. Corregir el código
+5. Re-ejecutar el test
+
+---
+
+#### ** Test Error (Amarillo/Rojo)**
+
+```
+ERROR  Tests\Feature\RecetaImagenTest > subir imagen guarda archivo
+Call to undefined method
+```
+
+**Significa:**
+- Error de código (sintaxis, método inexistente, etc.)
+- No es un fallo funcional, es un bug de programación
+
+**Cómo resolver:**
+1. Revisar el stack trace completo
+2. Identificar la línea exacta del error
+3. Corregir el código
+4. Re-ejecutar
+
+---
+
+### Tests Críticos para Verificar Requisitos
+
+#### **1. Autorización en Comentarios**
+
+```bash
+php artisan test --filter=test_usuario_no_puede_borrar_comentario_de_otro_usuario
+```
+
+**Verifica:** Política de seguridad (403 Forbidden si no es autor/admin)
+
+---
+
+#### **2. Sistema de Likes con Contador**
+
+```bash
+php artisan test --filter=test_usuario_puede_dar_like_y_contador_sube
+```
+
+**Verifica:** 
+- Like se crea correctamente
+- Contador `likes_count` aumenta
+- Base de datos actualizada
+
+---
+
+#### **3. Validación de Imágenes**
+
+```bash
+php artisan test --filter=test_no_se_pueden_subir_archivos_que_no_sean_imagenes
+```
+
+**Verifica:**
+- Solo se aceptan jpeg, png, jpg
+- Archivos PDF/TXT/DOCX son rechazados (422)
+- Validación Laravel funciona correctamente
+
+---
+
+#### **4. No Regresiones en Endpoints Existentes**
+
+```bash
+php artisan test --filter=RecetaTest
+```
+
+**Verifica:**
+- Los endpoints originales (CRUD de recetas) siguen funcionando
+- Las extensiones no rompieron código existente
+
+
+---
+
+### Debugging de Tests Fallidos
+
+#### **Ver output completo**
+
+```bash
+php artisan test --filter=NombreDelTest -v
+```
+
+O usar `dd()` dentro del test:
+
+```php
+public function test_ejemplo() {
+    $response = $this->getJson('/api/recetas/1');
+    dd($response->json());
+}
+```
+
+---
+
+#### **Ver queries SQL ejecutadas**
+
+Agregar en el test:
+
+```php
+\DB::enableQueryLog();
+$response = $this->getJson(...);
+dd(\DB::getQueryLog());
+```
+
+---
+
+#### **Verificar estado de base de datos**
+
+```php
+$this->assertDatabaseHas('comentarios', ['id' => 1, 'texto' => 'Mi comentario']);
+$this->assertDatabaseMissing('likes', ['user_id' => 1, 'receta_id' => 1]);
+```
+
+---
+
+### Casos de Prueba Manuales (Complementarios)
+
+Después de que todos los tests pasen, verificar manualmente:
+
+#### **1. Subida de Imagen Real**
+
+```bash
+# Crear receta con imagen desde HTTPie
+http --form POST :8000/api/recetas \
+  "Authorization:Bearer $TOKEN" \
+  titulo="Paella Visual" \
+  descripcion="Test de imagen" \
+  instrucciones="Test" \
+  imagen@foto_real.jpg
+
+# Verificar que el archivo existe físicamente
+ls storage/app/public/recetas/
+```
+
+**Verificar:**
+- Archivo guardado en `storage/app/public/recetas/`
+- URL accesible: `http://localhost/storage/recetas/xyz.jpg`
+- Imagen visible en navegador
+
+---
+
+#### **2. Filtros Avanzados desde Navegador**
+
+```bash
+# Crear 5 recetas con diferentes ingredientes y likes
+# Luego probar filtros desde Swagger UI o navegador
+
+http://localhost/api/recetas?ingrediente=pollo&sort=popular
+```
+
+**Verificar:**
+- Solo aparecen recetas con pollo
+- Ordenadas por número de likes (descendente)
+
+---
+
+#### **3. Cascade Delete**
+
+```bash
+# Crear receta con ingredientes, likes y comentarios
+# Luego eliminar la receta
+
+http DELETE :8000/api/recetas/1 "Authorization:Bearer $TOKEN"
 ```
 
 ---

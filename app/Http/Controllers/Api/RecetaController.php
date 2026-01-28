@@ -42,6 +42,13 @@ class RecetaController extends Controller
      *         @OA\Schema(type="string", example="arroz")
      *     ),
      *     @OA\Parameter(
+     *         name="min_likes",
+     *         in="query",
+     *         description="Filtrar por número mínimo de likes",
+     *         required=false,
+     *         @OA\Schema(type="integer", example=5)
+     *     ),
+     *     @OA\Parameter(
      *         name="sort",
      *         in="query",
      *         description="Ordenar por campo (popular, titulo, created_at). Prefijo '-' para descendente",
@@ -80,28 +87,19 @@ class RecetaController extends Controller
      *     @OA\Response(response=401, description="No autenticado")
      * )
      */
-     public function index(Request $request)
+     public function index(Request $request, RecetaService $recetaService)
      {
          $query = Receta::query();
 
-         // Filtro: Búsqueda general en título y descripción
-         $query->buscar($request->query('q'));
+         // Aplicar filtros usando el Service (mantiene controlador limpio)
+         $recetaService->applyFilters($query, [
+             'q' => $request->query('q'),
+             'ingrediente' => $request->query('ingrediente'),
+             'min_likes' => $request->query('min_likes'),
+         ]);
 
-         // Filtro: Por ingrediente (nuevo)
-         $query->conIngrediente($request->query('ingrediente'));
-
-         // Ordenación avanzada
-         $sort = $request->query('sort');
-
-         if ($sort === 'popular' || $sort === '-popular') {
-             // Ordenar por popularidad (número de likes)
-             $query->porPopularidad();
-         } else if ($sort) {
-             // Ordenación por otros campos
-             $direction = str_starts_with($sort, '-') ? 'desc' : 'asc';
-             $field = ltrim($sort, '-');
-             $query->ordenarPor($field, $direction);
-         }
+         // Aplicar ordenación usando el Service
+         $recetaService->applySort($query, $request->query('sort'));
 
          // Siempre cargar el contador de likes
          $query->withCount('likes');
@@ -157,7 +155,7 @@ class RecetaController extends Controller
      *     @OA\Response(response=422, description="Error de validación")
      * )
      */
-    public function store(Request $request): \Illuminate\Http\JsonResponse
+    public function store(Request $request, RecetaService $recetaService): \Illuminate\Http\JsonResponse
     {
         $data = $request->validate([
             'titulo' => 'required|string|max:200',
@@ -166,13 +164,10 @@ class RecetaController extends Controller
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // max 2MB
         ]);
 
-        // Procesar la imagen si fue enviada
+        // Procesar la imagen si fue enviada usando el Service
         $imagenUrl = null;
         if ($request->hasFile('imagen')) {
-            $imagen = $request->file('imagen');
-            // Guardar en storage/app/public/recetas
-            $path = $imagen->store('recetas', 'public');
-            $imagenUrl = $path;
+            $imagenUrl = $recetaService->handleImageUpload($request->file('imagen'));
         }
 
         $receta = Receta::create([
@@ -316,17 +311,13 @@ class RecetaController extends Controller
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // max 2MB
         ]);
 
-        // Procesar la imagen si fue enviada
+        // Procesar la imagen si fue enviada usando el Service
         if ($request->hasFile('imagen')) {
-            // Eliminar la imagen anterior si existe
-            if ($receta->imagen_url) {
-                \Storage::disk('public')->delete($receta->imagen_url);
-            }
+            // Eliminar la imagen anterior
+            $recetaService->deleteImage($receta->imagen_url);
 
-            $imagen = $request->file('imagen');
-            // Guardar en storage/app/public/recetas
-            $path = $imagen->store('recetas', 'public');
-            $data['imagen_url'] = $path;
+            // Guardar la nueva imagen
+            $data['imagen_url'] = $recetaService->handleImageUpload($request->file('imagen'));
         }
 
         $receta->update($data);
@@ -368,7 +359,7 @@ class RecetaController extends Controller
      *     @OA\Response(response=404, description="Receta no encontrada")
      * )
      */
-    public function destroy(Receta $receta)
+    public function destroy(Receta $receta, RecetaService $recetaService)
     {
         // 1. Autorización (403 si falla)
         $this->authorize('delete', $receta);
@@ -378,10 +369,8 @@ class RecetaController extends Controller
          * Gate::authorize('delete', $receta);
          */
 
-        // 2. Eliminar la imagen si existe
-        if ($receta->imagen_url) {
-            \Storage::disk('public')->delete($receta->imagen_url);
-        }
+        // 2. Eliminar la imagen si existe usando el Service
+        $recetaService->deleteImage($receta->imagen_url);
 
         // 3. Eliminar la receta
         $receta->delete();

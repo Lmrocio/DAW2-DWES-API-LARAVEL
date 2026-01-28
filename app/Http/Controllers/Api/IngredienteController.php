@@ -110,8 +110,8 @@ class IngredienteController extends Controller
 
         $data = $request->validate([
             'nombre' => 'required|string|max:100',
-            'cantidad' => 'required|string|max:50',
-            'unidad' => 'required|string|max:50',
+            'cantidad' => 'required|numeric|min:0.01',
+            'unidad' => 'required|string|in:g,kg,ml,l,ud,cucharada,cucharadita,taza,pizca',
         ]);
 
         $ingrediente = $receta->ingredientes()->create($data);
@@ -206,8 +206,8 @@ class IngredienteController extends Controller
 
         $data = $request->validate([
             'nombre' => 'sometimes|required|string|max:100',
-            'cantidad' => 'sometimes|required|string|max:50',
-            'unidad' => 'sometimes|required|string|max:50',
+            'cantidad' => 'sometimes|required|numeric|min:0.01',
+            'unidad' => 'sometimes|required|string|in:g,kg,ml,l,ud,cucharada,cucharadita,taza,pizca',
         ]);
 
         $ingrediente->update($data);
